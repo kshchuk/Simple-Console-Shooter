@@ -15,8 +15,7 @@
 #include <Windows.h>
 
 
-
-class Configs 
+const class Configs 
 {
 
 public:
@@ -72,7 +71,7 @@ public:
 			playerX = 14.7f;		j["PlayerX"] = playerX;
 			playerY = 5.09f;		j["PlayerY"] = playerY;
 			playerA = 0.0f;			j["PlayerA"] = playerA;
-			FOV = 3.14159f / 4.0f;  j["FOV"] = FOV;
+			FOV = 3.14159f / 4.0f;	j["FOV"] = FOV;
 			depth = 16.0f;			j["depth"] = depth;
 			speed = 4.0f;			j["speed"] = speed;
 
@@ -105,6 +104,7 @@ public:
 	}
 };
 
+
 class Player
 {
 public:
@@ -112,19 +112,16 @@ public:
 	float y;				    // Player Position Y
 	float rotation;				// Player Rotation
 
-	float FOV;					// Field of View
-	float depth;				// Maximum rendering distance
-	float speed;				// Walking Speed
+	const float FOV;				// Field of View
+	const float depth;				// Maximum rendering distance
+	const float speed;				// Walking Speed
 
 
 	Player(Configs conf)
+	: FOV(conf.FOV), depth(conf.depth), speed(conf.speed)
 	{
 		x = conf.playerX;
 		y = conf.playerY;
-		rotation = conf.playerA;
-		FOV = conf.FOV;
-		depth = conf.depth;
-		speed = conf.speed;
 	}
 
 	void RandomPosition(Configs conf)
@@ -133,8 +130,8 @@ public:
 		std::mt19937 mersenne(rd());
 
 		do {
-			x = mersenne()/100 % conf.mapWidth;
-			y = mersenne()/100 % conf.mapHeight;
+			x = mersenne() % conf.mapWidth;
+			y = mersenne() % conf.mapHeight;
 		}
 		while (conf.map[x][y]);
 
@@ -142,27 +139,8 @@ public:
 	}
 };
 
-
-
-int main()
+void RenderFrame(Configs conf, Player* players, size_t players_num, )
 {
-	Configs conf;
-	Player player(conf); 
-	player.RandomPosition(conf);
-
-	std::vector<std::vector<bool>> map = conf.map;
-
-	// Create Screen Buffer
-	wchar_t* screen = new wchar_t[conf.screenWidth * conf.screenHeight];
-	HANDLE hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
-	SetConsoleActiveScreenBuffer(hConsole);
-	DWORD dwBytesWritten = 0;
-
-	auto tp1 = std::chrono::system_clock::now();
-	auto tp2 = std::chrono::system_clock::now();
-
-	while (true)
-	{
 		// We'll need time differential per frame to calculate modification
 		// to movement speeds, to ensure consistant movement, as ray-tracing
 		// is non-deterministic
@@ -321,6 +299,29 @@ int main()
 		// Display Frame
 		screen[conf.screenWidth * conf.screenHeight - 1] = '\0';
 		WriteConsoleOutputCharacter(hConsole, screen, conf.screenWidth * conf.screenHeight, { 0,0 }, &dwBytesWritten);
+}
+
+
+int main()
+{
+	Configs conf;
+	Player* player = new Player(conf); 
+	player->RandomPosition(conf);
+
+	std::vector<std::vector<bool>> map = conf.map;
+
+	// Create Screen Buffer
+	wchar_t* screen = new wchar_t[conf.screenWidth * conf.screenHeight];
+	HANDLE hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+	SetConsoleActiveScreenBuffer(hConsole);
+	DWORD dwBytesWritten = 0;
+
+	auto tp1 = std::chrono::system_clock::now();
+	auto tp2 = std::chrono::system_clock::now();
+
+	while (true)
+	{
+		RenderFrame(conf, player, 1, )
 	}
 
 	return 0;
