@@ -1,6 +1,5 @@
-#include <Windows.h>
 
-
+#include "ClientGame.h"
 #include "Configs.h"
 #include "Player.h"
 #include "Rendering.h"
@@ -9,6 +8,10 @@
 
 int main()
 {
+	ClientGame* client = new ClientGame();
+
+	system("PAUSE");
+
 	Configs conf;
 	std::vector<std::vector<bool>> map = conf.map;
 	size_t players_number = 1;

@@ -18,7 +18,7 @@ ClientNetwork::ClientNetwork(void) {
 
     if (iResult != 0) {
         printf("WSAStartup failed with error: %d\n", iResult);
-        exit(1);
+        return;
     }
 
     // set address info
@@ -34,7 +34,7 @@ ClientNetwork::ClientNetwork(void) {
     {
         printf("getaddrinfo failed with error: %d\n", iResult);
         WSACleanup();
-        exit(1);
+        return;
     }
 
     // Attempt to connect to an address until one succeeds
@@ -47,7 +47,7 @@ ClientNetwork::ClientNetwork(void) {
         if (ConnectSocket == INVALID_SOCKET) {
             printf("socket failed with error: %ld\n", WSAGetLastError());
             WSACleanup();
-            exit(1);
+            return;
         }
 
         // Connect to server.
@@ -57,7 +57,7 @@ ClientNetwork::ClientNetwork(void) {
         {
             closesocket(ConnectSocket);
             ConnectSocket = INVALID_SOCKET;
-            printf("The server is down... did not connect");
+            printf("The server is down... did not connect\n");
         }
     }
 
@@ -73,7 +73,7 @@ ClientNetwork::ClientNetwork(void) {
     {
         printf("Unable to connect to server!\n");
         WSACleanup();
-        exit(1);
+        return;
     }
 
 
@@ -86,6 +86,6 @@ ClientNetwork::ClientNetwork(void) {
         printf("ioctlsocket failed with error: %d\n", WSAGetLastError());
         closesocket(ConnectSocket);
         WSACleanup();
-        exit(1);
+        return;
     }
 }
