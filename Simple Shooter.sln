@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.32510.428
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Simple Shooter", "Simple Shooter.vcxproj", "{16AA3CCB-BD19-47B8-9974-34502E5134F0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleShooterServer", "..\SimpleShooterServer\SimpleShooterServer.vcxproj", "{0934929D-ECED-4048-9B0C-1EF8801D6CCE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{16AA3CCB-BD19-47B8-9974-34502E5134F0}.Release|x64.Build.0 = Release|x64
 		{16AA3CCB-BD19-47B8-9974-34502E5134F0}.Release|x86.ActiveCfg = Release|Win32
 		{16AA3CCB-BD19-47B8-9974-34502E5134F0}.Release|x86.Build.0 = Release|Win32
+		{0934929D-ECED-4048-9B0C-1EF8801D6CCE}.Debug|x64.ActiveCfg = Debug|x64
+		{0934929D-ECED-4048-9B0C-1EF8801D6CCE}.Debug|x64.Build.0 = Debug|x64
+		{0934929D-ECED-4048-9B0C-1EF8801D6CCE}.Debug|x86.ActiveCfg = Debug|Win32
+		{0934929D-ECED-4048-9B0C-1EF8801D6CCE}.Debug|x86.Build.0 = Debug|Win32
+		{0934929D-ECED-4048-9B0C-1EF8801D6CCE}.Release|x64.ActiveCfg = Release|x64
+		{0934929D-ECED-4048-9B0C-1EF8801D6CCE}.Release|x64.Build.0 = Release|x64
+		{0934929D-ECED-4048-9B0C-1EF8801D6CCE}.Release|x86.ActiveCfg = Release|Win32
+		{0934929D-ECED-4048-9B0C-1EF8801D6CCE}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
