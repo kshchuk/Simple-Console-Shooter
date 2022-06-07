@@ -156,6 +156,7 @@
     <ClInclude Include="ClientNetwork.h" />
     <ClInclude Include="Configs.h" />
     <ClInclude Include="json.hpp" />
+    <ClInclude Include="NetworkData.h" />
     <ClInclude Include="NetworkServices.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Rendering.h" />

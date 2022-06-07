@@ -5,7 +5,6 @@
 
 const class Configs
 {
-
 public:
 	int screenWidth;			// Console Screen Size X (columns)
 	int screenHeight;			// Console Screen Size Y (rows)
@@ -19,8 +18,8 @@ public:
 	float depth;				// Maximum rendering distance
 	float speed;				// Walking Speed
 
-	char* serverIP;				// IP to connect multiplay
-	char* serverPORT;			// PORT to send information
+	char* serverIP = nullptr;			// IP to connect multiplay
+	char* serverPORT = nullptr;			// PORT to send information
 
 	// Map of the world
 	std::vector<std::vector<bool>> map;

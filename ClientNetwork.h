@@ -4,6 +4,7 @@
 #include <winsock2.h>
 #include <Windows.h>
 #include "NetworkServices.h"
+#include "NetworkData.h"
 #include <ws2tcpip.h>
 #include <stdio.h> 
 
@@ -11,7 +12,7 @@
 constexpr int DEFAULT_BUFLEN = 512;
 
 // ip/port to connect sockets through 
-constexpr char SERVER_IP[] = "198.16.74.45";
+constexpr char SERVER_IP[] = "10.11.27.20";
 constexpr char DEFAULT_PORT[] = "6881";
 
 // Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib

@@ -19,12 +19,6 @@ Configs::Configs()
 		FOV = j["FOV"];
 		depth = j["depth"];
 		speed = j["speed"];
-		std::string IP = j["serverIP"];
-		serverIP = new char[IP.size() + 2];
-		strcpy_s(serverIP, IP.size()+1, IP.c_str());
-		std::string PORT = j["serverPORT"];
-		serverPORT = new char[PORT.size() + 2];
-		strcpy_s(serverPORT, PORT.size()+1, PORT.c_str());
 		map = j["map"];
 
 		jsonFile.close();
@@ -47,9 +41,6 @@ Configs::Configs()
 		FOV = 3.14159f / 4.0f;	j["FOV"] = FOV;
 		depth = 16.0f;			j["depth"] = depth;
 		speed = 4.0f;			j["speed"] = speed;
-
-		serverIP = new char[] { "127.0.0.1"};	j["serverIP"] = std::string(serverIP);		// localhost
-		serverPORT = new char[] { "6881" };		j["serverPORT"] = std::string(serverPORT);  // default port
 
 		map = {
 			{1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
