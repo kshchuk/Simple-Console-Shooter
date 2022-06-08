@@ -1,8 +1,10 @@
 #pragma once
 #include <winsock2.h>
 #include <Windows.h>
+#include <map>
 #include "ClientNetwork.h"
 #include "Configs.h"
+#include "Player.h"
 
 
 class ClientGame
@@ -10,14 +12,25 @@ class ClientGame
 public:
     Configs* config;
 
+    Player* player;
+
+    // Index and player
+    std::map<int, Player*> other_players;
+
     ClientGame();
     ~ClientGame(void);
 
-    ClientNetwork* network;
+    bool gotConfigs = false;
 
-    //void sendActionPackets();
+    ClientNetwork* network;
 
     char network_data[MAX_PACKET_SIZE];
 
+    // Receive packets
     void update();
+
+    // Send location: x, y, rotation
+    void sendPlayerLocation();
+
+    void RegisterPlayer(Player& player);
 };

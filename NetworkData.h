@@ -25,9 +25,6 @@ struct Packet
 
     char* packet_data;
 
-    //~Packet() {
-    //    delete[] packet_data;
-    //}
 
     // Serialize function is used to convert the data 
     // into bytes that we can send over the network

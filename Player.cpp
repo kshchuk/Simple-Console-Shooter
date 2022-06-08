@@ -8,6 +8,9 @@ Player::Player(Configs conf)
 	y = conf.playerY;
 	rotation = 0;
 	health = 100;
+	pWidth = conf.pWidth;
+	pHight = conf.pHight;
+	pDepth = conf.pDepth;
 }
 
 void Player::RandomPosition(Configs conf)
@@ -20,5 +23,5 @@ void Player::RandomPosition(Configs conf)
 		y = mersenne() % conf.mapHeight;
 	} while (conf.map[x][y]);
 
-	rotation = 0;
+	rotation = (mersenne() % 314) / 100;
 }

@@ -18,6 +18,12 @@ public:
 	float depth;				// Maximum rendering distance
 	float speed;				// Walking Speed
 
+	float pWidth;				// Profile width
+	float pDepth;				// Profile depth
+	float pHight;				// Profile height
+
+	int health = 100;			// default health 
+
 	//char* serverIP = nullptr;			// IP to connect multiplay
 	//char* serverPORT = nullptr;		// PORT to send information
 

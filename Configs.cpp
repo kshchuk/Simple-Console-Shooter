@@ -8,7 +8,7 @@ Configs::Configs()
 	else  // There's no config file
 	{
 		// defaults
-		screenWidth = 384;		
+		screenWidth = 384;
 		screenHeight = 123;		
 		mapWidth = 20;			
 		mapHeight = 20;			
@@ -18,7 +18,11 @@ Configs::Configs()
 		playerA = 0.0f;			
 		FOV = 3.14159f / 4.0f;	
 		depth = 16.0f;			
-		speed = 4.0f;			
+		speed = 4.0f;		
+
+		pWidth = 0.2f;
+		pDepth = 0.1f;
+		pHight = 1.0f;
 
 		map = {
 			{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
@@ -52,14 +56,15 @@ Configs::Configs(char* config_data)
 	memcpy(this, config_data, sizeof(Configs) - sizeof(map)); // map is corrupted vector
 
 	// Getting map
-	bool* bmap = (bool*)(config_data + sizeof(Configs) + sizeof(map));
+	int* imap = (int*)(config_data + sizeof(Configs));
+
 	map.clear();
 	map.resize(mapHeight);
 	for (auto& line : map)
 		line.resize(mapWidth);
 	for (size_t i = 0; i < mapHeight; i++)
 		for (size_t j = 0; j < mapWidth; j++)
-			map[i][j] = bmap[i * mapWidth + j];
+			map[i][j] = (bool)imap[i * mapWidth + j];
 
 	saveToFile();
 }
@@ -82,6 +87,11 @@ bool Configs::readFromFile()
 		FOV =   j["FOV"];
 		depth = j["depth"];
 		speed = j["speed"];
+
+		pWidth = j["pWidth"];
+		pDepth = j["pDepth"];
+		pHight = j["pHight"];
+		
 		map =   j["map"];
 
 		jsonFile.close();
@@ -108,6 +118,11 @@ void Configs::saveToFile()
 	j["FOV"]     = FOV;
 	j["depth"]   = depth;
 	j["speed"]   = speed;
+
+	j["pWidth"] = pWidth;
+	j["pDepth"] = pDepth;
+	j["pHight"] = pHight;
+
 	j["map"]     = map;
 
 	std::ofstream jsonFile("config.json");

@@ -18,20 +18,7 @@ ClientGame::ClientGame(void)
     //NetworkServices::sendMessage(network->ConnectSocket, packet_data, packet_size);
 }
 
-//void ClientGame::sendActionPackets()
-//{
-//    // send action packet
-//    const unsigned int packet_size = sizeof(Packet);
-//    char packet_data[packet_size];
-//
-//    Packet packet;
-//    packet.packet_type = ACTION_EVENT;
-//
-//    packet.serialize(packet_data);
-//
-//    NetworkServices::sendMessage(network->ConnectSocket, packet_data, packet_size);
-//}
-
+// Receive packets
 void ClientGame::update()
 {
     Packet packet;
@@ -49,14 +36,36 @@ void ClientGame::update()
         packet.deserialize(&(network_data[i]));
         i += sizeof(packet.packet_type) + sizeof(packet.size_of_packet_data) + packet.size_of_packet_data;
 
-        switch (packet.packet_type) {
-
+        switch (packet.packet_type)
+        {
         case INIT_CONNECTION:
-
+        {
             config = new Configs(packet.packet_data);
             printf("Client received configuration file\n");
+            gotConfigs = true;
+            break;
+        }
+        case MOVEMENT:
+        {
+            int player_index;
+            memcpy(&player_index, packet.packet_data, sizeof(player_index));
+
+            // If there's no such player before
+            if (other_players.count(player_index) == 0)
+                other_players.insert(std::make_pair(player_index, new Player(*config)));
+
+            Player* player_to_change = other_players[player_index];
+
+            player_to_change->index = player_index;
+
+            memcpy(&player_to_change->x, packet.packet_data + sizeof(player_to_change->index), sizeof(player_to_change->x));
+            memcpy(&player_to_change->y, packet.packet_data + sizeof(player_to_change->index) + sizeof(player_to_change->x), sizeof(player_to_change->y));
+            memcpy(&player_to_change->rotation, packet.packet_data + sizeof(player_to_change->index) + sizeof(player_to_change->x) +
+                sizeof(player_to_change->y), sizeof(player_to_change->rotation));
+
             break;
 
+        }
         default:
 
             printf("Error in packet types\n");
@@ -64,4 +73,31 @@ void ClientGame::update()
             break;
         }
     }
+}
+
+void ClientGame::sendPlayerLocation()
+{
+    Packet packet;
+    packet.packet_type = MOVEMENT;
+    
+    packet.size_of_packet_data = sizeof(player->x) + sizeof(player->y) + sizeof(player->rotation);
+    packet.packet_data = new char[packet.size_of_packet_data];
+
+    memcpy(packet.packet_data, &player->x, sizeof(player->x));
+    memcpy(packet.packet_data + sizeof(player->x), &player->y, sizeof(player->y));
+    memcpy(packet.packet_data + sizeof(player->x) + sizeof(player->y), &player->rotation, sizeof(player->rotation));
+
+    size_t packed_size = packet.size_of_packet_data + sizeof(packet.packet_type) + sizeof(packet.packet_data);
+    char* compressed_packet = new char[packed_size];
+    packet.serialize(compressed_packet);
+
+    NetworkServices::sendMessage(network->ConnectSocket, compressed_packet, packed_size);
+
+    delete[] packet.packet_data;
+    delete[] compressed_packet;
+}
+
+void ClientGame::RegisterPlayer(Player& player)
+{
+    this->player = &player;
 }

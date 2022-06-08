@@ -9,10 +9,8 @@
 int main()
 {
 	ClientGame* client = new ClientGame();
-
-	while (true) {
+	while (!client->gotConfigs)
 		client->update();
-	}
 
 	Configs conf;
 
@@ -22,6 +20,7 @@ int main()
 	size_t players_number = 1;
 	Player player(conf); 
 	player.RandomPosition(conf);
+	client->RegisterPlayer(player);
 
 
 	// Create Screen Buffer
@@ -35,6 +34,8 @@ int main()
 
 	while (true)
 	{
+		client->sendPlayerLocation();
+
 		// We'll need time differential per frame to calculate modification
 		// to movement speeds, to ensure consistant movement, as ray-tracing
 		// is non-deterministic
