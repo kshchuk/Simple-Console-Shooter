@@ -12,7 +12,7 @@
 constexpr int DEFAULT_BUFLEN = 512;
 
 // ip/port to connect sockets through 
-constexpr char SERVER_IP[] = "10.11.27.20";
+constexpr char SERVER_IP[] = "127.0.0.1";
 constexpr char DEFAULT_PORT[] = "6881";
 
 // Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
@@ -34,5 +34,7 @@ public:
     // ctor/dtor
     ClientNetwork(void);
     ~ClientNetwork(void);
+
+    int receivePackets(char*);
 };
 

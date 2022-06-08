@@ -10,6 +10,10 @@ int main()
 {
 	ClientGame* client = new ClientGame();
 
+	while (true) {
+		client->update();
+	}
+
 	system("PAUSE");
 
 	Configs conf;
