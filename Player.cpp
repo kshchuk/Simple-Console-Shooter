@@ -7,6 +7,7 @@ Player::Player(Configs conf)
 	x = conf.playerX;
 	y = conf.playerY;
 	rotation = 0;
+	health = 100;
 }
 
 void Player::RandomPosition(Configs conf)

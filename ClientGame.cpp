@@ -6,31 +6,31 @@ ClientGame::ClientGame(void)
 {
     network = new ClientNetwork();
 
-    // send init packet
-    const unsigned int packet_size = sizeof(Packet);
-    char packet_data[packet_size];
+    //// send init packet
+    //const unsigned int packet_size = sizeof(Packet);
+    //char packet_data[packet_size];
 
-    Packet packet;
-    packet.packet_type = INIT_CONNECTION;
+    //Packet packet;
+    //packet.packet_type = INIT_CONNECTION;
 
-    packet.serialize(packet_data);
+    //packet.serialize(packet_data);
 
-    NetworkServices::sendMessage(network->ConnectSocket, packet_data, packet_size);
+    //NetworkServices::sendMessage(network->ConnectSocket, packet_data, packet_size);
 }
 
-void ClientGame::sendActionPackets()
-{
-    // send action packet
-    const unsigned int packet_size = sizeof(Packet);
-    char packet_data[packet_size];
-
-    Packet packet;
-    packet.packet_type = ACTION_EVENT;
-
-    packet.serialize(packet_data);
-
-    NetworkServices::sendMessage(network->ConnectSocket, packet_data, packet_size);
-}
+//void ClientGame::sendActionPackets()
+//{
+//    // send action packet
+//    const unsigned int packet_size = sizeof(Packet);
+//    char packet_data[packet_size];
+//
+//    Packet packet;
+//    packet.packet_type = ACTION_EVENT;
+//
+//    packet.serialize(packet_data);
+//
+//    NetworkServices::sendMessage(network->ConnectSocket, packet_data, packet_size);
+//}
 
 void ClientGame::update()
 {
@@ -47,21 +47,19 @@ void ClientGame::update()
     while (i < (unsigned int)data_length)
     {
         packet.deserialize(&(network_data[i]));
-        i += sizeof(Packet);
+        i += sizeof(packet.packet_type) + sizeof(packet.size_of_packet_data) + packet.size_of_packet_data;
 
         switch (packet.packet_type) {
 
-        case ACTION_EVENT:
+        case INIT_CONNECTION:
 
-            printf("client received action event packet from server\n");
-
-            sendActionPackets();
-
+            config = new Configs(packet.packet_data);
+            printf("Client received configuration file\n");
             break;
 
         default:
 
-            printf("error in packet types\n");
+            printf("Error in packet types\n");
 
             break;
         }

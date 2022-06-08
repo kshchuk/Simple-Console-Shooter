@@ -14,9 +14,10 @@ int main()
 		client->update();
 	}
 
+	Configs conf;
+
 	system("PAUSE");
 
-	Configs conf;
 	std::vector<std::vector<bool>> map = conf.map;
 	size_t players_number = 1;
 	Player player(conf); 

@@ -18,12 +18,18 @@ public:
 	float depth;				// Maximum rendering distance
 	float speed;				// Walking Speed
 
-	char* serverIP = nullptr;			// IP to connect multiplay
-	char* serverPORT = nullptr;			// PORT to send information
+	//char* serverIP = nullptr;			// IP to connect multiplay
+	//char* serverPORT = nullptr;		// PORT to send information
 
 	// Map of the world
 	std::vector<std::vector<bool>> map;
 
 	Configs();
+
+	Configs(char*);
+
+private:
+	bool readFromFile();
+	void saveToFile();
 };
 

@@ -10,6 +10,8 @@ public:
 	float y;				    // Player Position Y
 	float rotation;				// Player Rotation
 
+	int health;						// min 1, max 100
+
 	const float FOV;				// Field of View
 	const float depth;				// Maximum rendering distance
 	const float speed;				// Walking Speed
