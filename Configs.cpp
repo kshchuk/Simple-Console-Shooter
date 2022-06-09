@@ -63,10 +63,10 @@ Configs::Configs(char* config_data)
 	for (auto& line : map)
 		line.resize(mapWidth);
 	for (size_t i = 0; i < mapHeight; i++) {
-		printf("\n");
+		//printf("\n");
 		for (size_t j = 0; j < mapWidth; j++) {
 			map[i][j] = (bool)imap[i * mapWidth + j];
-			printf("%i", imap[i * mapWidth + j]);
+			//printf("%i", imap[i * mapWidth + j]);
 		}
 	}
 
