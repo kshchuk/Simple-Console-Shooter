@@ -12,7 +12,7 @@
 constexpr int DEFAULT_BUFLEN = 512;
 
 // ip/port to connect sockets through 
-constexpr char SERVER_IP[] = "127.0.0.1";
+constexpr char SERVER_IP[] = "192.168.0.113";
 constexpr char DEFAULT_PORT[] = "6881";
 
 // Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib

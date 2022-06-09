@@ -56,15 +56,19 @@ Configs::Configs(char* config_data)
 	memcpy(this, config_data, sizeof(Configs) - sizeof(map)); // map is corrupted vector
 
 	// Getting map
-	int* imap = (int*)(config_data + sizeof(Configs));
+	int* imap = (int*)(config_data + sizeof(Configs) + sizeof(int));
 
 	map.clear();
 	map.resize(mapHeight);
 	for (auto& line : map)
 		line.resize(mapWidth);
-	for (size_t i = 0; i < mapHeight; i++)
-		for (size_t j = 0; j < mapWidth; j++)
+	for (size_t i = 0; i < mapHeight; i++) {
+		printf("\n");
+		for (size_t j = 0; j < mapWidth; j++) {
 			map[i][j] = (bool)imap[i * mapWidth + j];
+			printf("%i", imap[i * mapWidth + j]);
+		}
+	}
 
 	saveToFile();
 }
