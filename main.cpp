@@ -21,8 +21,9 @@ int main()
 		std::cout << "\n	Server IP:	";
 		std::string str;
 		std::cin >> str;
-		SERVER_IP = new char[str.size()];
-		strcpy_s(SERVER_IP, str.size(), str.c_str());
+		SERVER_IP = new char[str.length()];
+		memcpy(SERVER_IP, str.c_str(), str.length());
+		SERVER_IP[str.length()] = '\0';
 	}
 
 	ClientGame* client = new ClientGame(SERVER_IP);
