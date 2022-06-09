@@ -1,14 +1,32 @@
 
 #include "ClientGame.h"
+#include "ClientNetwork.h"
 #include "Configs.h"
 #include "Player.h"
 #include "Rendering.h"
+#include <iostream>
 
 
 
 int main()
 {
-	ClientGame* client = new ClientGame();
+	std::cout << "\n	Use localhost IP? (y/n)\n";
+	char* SERVER_IP;
+	char ans;
+	std::cin >> ans;
+	if (ans == 'y')
+		SERVER_IP = new char[] {"127.0.0.1"};
+	else
+	{
+		std::cout << "\n	Server IP:	";
+		std::string str;
+		std::cin >> str;
+		SERVER_IP = new char[str.size()];
+		strcpy_s(SERVER_IP, str.size(), str.c_str());
+	}
+
+	ClientGame* client = new ClientGame(SERVER_IP);
+
 	while (!client->gotConfigs)
 		client->update();
 

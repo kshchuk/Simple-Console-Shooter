@@ -1,6 +1,8 @@
 #include "ClientNetwork.h"
 
-ClientNetwork::ClientNetwork(void) {
+ClientNetwork::ClientNetwork(char* IP) {
+
+    SERVER_IP = IP;
 
     // create WSADATA object
     WSADATA wsaData;

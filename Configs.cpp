@@ -56,7 +56,7 @@ Configs::Configs(char* config_data)
 	memcpy(this, config_data, sizeof(Configs) - sizeof(map)); // map is corrupted vector
 
 	// Getting map
-	int* imap = (int*)(config_data + sizeof(Configs) + sizeof(int));
+	int* imap = (int*)(config_data + sizeof(Configs));
 
 	map.clear();
 	map.resize(mapHeight);

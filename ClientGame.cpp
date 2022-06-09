@@ -2,9 +2,9 @@
 #include "NetworkData.h"
 
 
-ClientGame::ClientGame(void)
+ClientGame::ClientGame(char* SERVER_IP)
 {
-    network = new ClientNetwork();
+    network = new ClientNetwork(SERVER_IP);
 
     //// send init packet
     //const unsigned int packet_size = sizeof(Packet);

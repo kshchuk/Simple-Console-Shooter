@@ -17,7 +17,7 @@ public:
     // Index and player
     std::map<int, Player*> other_players;
 
-    ClientGame();
+    ClientGame(char* SERVER_IP);
     ~ClientGame(void);
 
     bool gotConfigs = false;
