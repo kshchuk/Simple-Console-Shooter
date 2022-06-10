@@ -85,7 +85,8 @@ void Rendering::Collision(Player& player, float fElapsedTime, char key, const st
 	}
 }
 
-void Rendering::CalculatePosition(Player& player, const float fElapsedTime, const std::vector<std::vector<bool>>& map)
+void Rendering::CalculatePosition(Player& player, const float fElapsedTime, const std::vector<std::vector<bool>>& map,
+	const std::chrono::system_clock::time_point& curTime, std::chrono::system_clock::time_point& lastShootTme, ClientGame* client)
 {
 	// Handle CCW Rotation
 	if (GetAsyncKeyState((unsigned short)'A') & 0x8000)
@@ -125,6 +126,15 @@ void Rendering::CalculatePosition(Player& player, const float fElapsedTime, cons
 
 			Collision(player, fElapsedTime, 'S', map);
 		}
+	}
+
+	// Handle firing
+	if (GetAsyncKeyState((unsigned short)VK_RETURN) & 0x8000)
+	{
+		std::chrono::duration<float> diff = curTime - lastShootTme;
+		if (diff.count() > 1)
+			client->sendShootingInfo();
+		
 	}
 }
 

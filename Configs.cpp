@@ -20,6 +20,10 @@ Configs::Configs()
 		depth = 16.0f;			
 		speed = 4.0f;		
 
+		maxShootingRange = 50.0f;
+		gunReloading_seconds = 1.0f;
+		shootingDamage = 33;
+
 		pWidth = 0.25f;
 		pDepth = 0.17f;
 		pHight = 1.0f;
@@ -56,7 +60,7 @@ Configs::Configs(char* config_data)
 	memcpy(this, config_data, sizeof(Configs) - sizeof(map)); // map is corrupted vector
 
 	// Getting map
-	int* imap = (int*)(config_data + sizeof(Configs) - 4);
+	int* imap = (int*)(config_data + sizeof(Configs));
 
 	map.clear();
 	map.resize(mapHeight);
@@ -86,9 +90,9 @@ bool Configs::readFromFile()
 		nlohmann::json j;
 		jsonFile >> j;
 
-		screenWidth =  j["screenWidth"];
+		screenWidth  =  j["screenWidth"];
 		screenHeight = j["screenHeight"];
-		mapWidth =  j["mapWidth"];
+		mapWidth  = j["mapWidth"];
 		mapHeight = j["mapHeight"];
 		playerX = j["PlayerX"];
 		playerY = j["PlayerY"];
@@ -96,6 +100,10 @@ bool Configs::readFromFile()
 		FOV =   j["FOV"];
 		depth = j["depth"];
 		speed = j["speed"];
+
+		maxShootingRange = j["maxShootingRange"];
+		gunReloading_seconds = j["gunReloading_seconds"];
+		shootingDamage   = j["shootingDamage"];
 
 		pWidth = j["pWidth"];
 		pDepth = j["pDepth"];
@@ -128,11 +136,15 @@ void Configs::saveToFile()
 	j["depth"]   = depth;
 	j["speed"]   = speed;
 
+	j["maxShootingRange"] = maxShootingRange;
+	j["gunReloading_seconds"] = gunReloading_seconds;
+	j["shootingDamage"]   = shootingDamage;
+
 	j["pWidth"] = pWidth;
 	j["pDepth"] = pDepth;
 	j["pHight"] = pHight;
 
-	j["map"]     = map;
+	j["map"]    = map;
 
 	std::ofstream jsonFile("config.json");
 	jsonFile << j;

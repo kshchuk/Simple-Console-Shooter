@@ -1,4 +1,6 @@
 
+
+
 #include "ClientGame.h"
 #include "ClientNetwork.h"
 #include "Configs.h"
@@ -50,6 +52,8 @@ int main()
 	auto tp1 = std::chrono::system_clock::now();
 	auto tp2 = std::chrono::system_clock::now();
 
+	auto lastShootTime = std::chrono::system_clock::now();;
+
 	while (true)
 	{
 		client->update();
@@ -63,10 +67,9 @@ int main()
 		tp1 = tp2;
 		float fElapsedTime = elapsedTime.count();
 
-		Rendering::CalculatePosition(player, fElapsedTime, map);
+		Rendering::CalculatePosition(player, fElapsedTime, map, tp1, lastShootTime, client);
 		Rendering::RenderFrame(conf, player, conf.map, screen, hConsole, dwBytesWritten, tp1, tp2, fElapsedTime, client->other_players);
 	}
-
 	return 0;
 }
 

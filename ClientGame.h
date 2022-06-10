@@ -32,5 +32,8 @@ public:
     // Send location: x, y, rotation
     void sendPlayerLocation();
 
+    // Send location && direction of shooting
+    void sendShootingInfo();
+
     void RegisterPlayer(Player& player);
 };

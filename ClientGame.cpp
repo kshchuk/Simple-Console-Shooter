@@ -5,17 +5,6 @@
 ClientGame::ClientGame(char* SERVER_IP)
 {
     network = new ClientNetwork(SERVER_IP);
-
-    //// send init packet
-    //const unsigned int packet_size = sizeof(Packet);
-    //char packet_data[packet_size];
-
-    //Packet packet;
-    //packet.packet_type = INIT_CONNECTION;
-
-    //packet.serialize(packet_data);
-
-    //NetworkServices::sendMessage(network->ConnectSocket, packet_data, packet_size);
 }
 
 // Receive packets
@@ -67,12 +56,17 @@ void ClientGame::update()
                 sizeof(player_to_change->y), sizeof(player_to_change->rotation));
 
             break;
-
+        }
+        case SHOOTING:
+        {
+            memcpy(&player->health, packet.packet_data, sizeof(player->health));
+            memcpy(&player->x, packet.packet_data + sizeof(player->health), sizeof(player->x));
+            memcpy(&player->y, packet.packet_data + sizeof(player->health) + sizeof(player->x), sizeof(player->y));
+            memcpy(&player->rotation, packet.packet_data + sizeof(player->health) + sizeof(player->x) + sizeof(player->y), sizeof(player->rotation));
+            
+            break;
         }
         default:
-
-            printf("Error in packet types\n");
-
             break;
         }
     }
@@ -82,6 +76,30 @@ void ClientGame::sendPlayerLocation()
 {
     Packet packet;
     packet.packet_type = MOVEMENT;
+    
+    packet.size_of_packet_data = sizeof(player->x) + sizeof(player->y) + sizeof(player->rotation);
+    packet.packet_data = new char[packet.size_of_packet_data];
+
+    memcpy(packet.packet_data, &player->x, sizeof(player->x));
+    memcpy(packet.packet_data + sizeof(player->x), &player->y, sizeof(player->y));
+    memcpy(packet.packet_data + sizeof(player->x) + sizeof(player->y), &player->rotation, sizeof(player->rotation));
+
+    size_t packed_size = packet.size_of_packet_data + sizeof(packet.packet_type) + sizeof(packet.packet_data);
+    char* compressed_packet = new char[packed_size];
+    packet.serialize(compressed_packet);
+
+    NetworkServices::sendMessage(network->ConnectSocket, compressed_packet, packed_size);
+
+    delete[] packet.packet_data;
+    delete[] compressed_packet;
+}
+
+
+// Send location && direction of shooting
+void ClientGame::sendShootingInfo()
+{
+    Packet packet;
+    packet.packet_type = SHOOTING;
     
     packet.size_of_packet_data = sizeof(player->x) + sizeof(player->y) + sizeof(player->rotation);
     packet.packet_data = new char[packet.size_of_packet_data];

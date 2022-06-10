@@ -10,10 +10,7 @@ enum PacketTypes
 
     MOVEMENT,
 
-    SHOUTING,
-
-    CHANGE_HEALTH,
-
+    SHOOTING,
 };
 
 
