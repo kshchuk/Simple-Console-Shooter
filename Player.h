@@ -29,7 +29,7 @@ public:
 
 	Player(Configs conf);
 
-	void RandomPosition(Configs conf);
+	void RandomPosition(Configs* conf);
 
 	// Calculate siluet's rectangel corners positions
 	void CaclulatePositions();

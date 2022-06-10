@@ -21,6 +21,7 @@ Configs::Configs()
 		speed = 4.0f;
 
 		maxShootingRange = 50;
+		gunReloading_seconds = 1.0f;
 		shootingDamage = 33;			
 
 		pWidth = 0.25f;
@@ -94,6 +95,7 @@ bool Configs::readFromFile()
 		speed = j["speed"];
 
 		maxShootingRange = j["maxShootingRange"];
+		gunReloading_seconds = j["gunReloading_seconds"];
 		shootingDamage = j["shootingDamage"];
 
 		pWidth = j["pWidth"];
@@ -128,6 +130,7 @@ void Configs::saveToFile()
 	j["speed"] = speed;
 
 	j["maxShootingRange"] = maxShootingRange;
+	j["gunReloading_seconds"] = gunReloading_seconds;
 	j["shootingDamage"] = shootingDamage;
 
 	j["pWidth"] = pWidth;

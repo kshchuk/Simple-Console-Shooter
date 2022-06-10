@@ -81,6 +81,47 @@ void ServerGame::sendMovementPackets(Player* player)
     delete[] packet.packet_data;
 
 }
+
+// Sends shouting information: new health and small movement (0.05) or return player to spawn
+void ServerGame::sendShootingInfo(Player* shooter, Player* player_to_change)
+{
+    if (player_to_change->health - configs->shootingDamage <= 0) {
+        player_to_change->RandomPosition(configs); // respawn
+        player_to_change->health = 100;
+    }
+    else {
+        player_to_change->health -= configs->shootingDamage;
+
+        // do some moving of the target
+        float fDirectX = sinf(shooter->rotation);   // Unit vector for ray in shooting direction
+        float fDirectY = cosf(shooter->rotation);
+
+        player_to_change->x += fDirectX * 0.05;
+        player_to_change->y += fDirectY * 0.05;
+    }
+
+    Packet packet;
+    packet.packet_type = SHOOTING;
+    packet.size_of_packet_data = sizeof(player_to_change->health) + sizeof(player_to_change->x) +
+        sizeof(player_to_change->y) + sizeof(player_to_change->rotation);
+
+    packet.packet_data = new char[packet.size_of_packet_data];
+    memcpy(packet.packet_data, &player_to_change->health, sizeof(player_to_change->health));
+    memcpy(packet.packet_data + sizeof(player_to_change->health), &player_to_change->x, sizeof(player_to_change->x));
+    memcpy(packet.packet_data + sizeof(player_to_change->health) + sizeof(player_to_change->x),
+        &player_to_change->y, sizeof(player_to_change->y));
+    memcpy(packet.packet_data + sizeof(player_to_change->health) + sizeof(player_to_change->x) + sizeof(player_to_change->y),
+        &player_to_change->rotation, sizeof(player_to_change->rotation));
+
+    size_t packet_size = sizeof(packet.packet_type) + sizeof(packet.size_of_packet_data) + packet.size_of_packet_data;
+    char* packet_data = new char[packet_size];
+
+    packet.serialize(packet_data);
+
+    NetworkServices::sendMessage(network->sessions[player_to_change->index], packet_data, packet_size);
+    delete[] packet.packet_data;
+    delete[] packet_data;
+}
 void ServerGame::printMap()
 {
     system("cls");
@@ -232,7 +273,7 @@ void ServerGame::receiveFromClients()
             i += sizeof(packet.packet_type) + sizeof(packet.size_of_packet_data) + packet.size_of_packet_data;
 
             switch (packet.packet_type) {
-                
+
                 // Receiving location: x, y, rotation
             case MOVEMENT:
             {
@@ -243,7 +284,7 @@ void ServerGame::receiveFromClients()
                 memcpy(&player_to_change->y, packet.packet_data + sizeof(player_to_change->x), sizeof(player_to_change->y));
                 memcpy(&player_to_change->rotation, packet.packet_data + sizeof(player_to_change->x) + sizeof(player_to_change->y),
                     sizeof(player_to_change->rotation));
-                
+
                 // Update the real map
                 updateMap(player_to_change);
 
@@ -252,7 +293,7 @@ void ServerGame::receiveFromClients()
                 delete[] packet.packet_data;
                 break;
             }
-            case SHOOTING:  
+            case SHOOTING:
             {
                 // Update player location
                 size_t player_index = (*iter).first;
@@ -267,7 +308,7 @@ void ServerGame::receiveFromClients()
                 {
                     if (checkShouting(shooter, iter.second) && shooter->index != iter.first)
                     {
-                        sendShoutingInfo(shooter, iter.second);
+                        sendShootingInfo(shooter, iter.second);
                         sendMovementPackets(iter.second);
                         updateMap(iter.second);
                     }
@@ -276,59 +317,18 @@ void ServerGame::receiveFromClients()
                 delete[] packet.packet_data;
                 break;
             }
-//
+            //
             default:
-//
-//                printf("error in packet types\n");
-//
-               break;
+                //
+                //                printf("error in packet types\n");
+                //
+                break;
             }
-     }
-  }
+        }
+    }
 }
 
-// Sends shouting information: decreasing of health and small movement (0.05) or return player to spawn
-void sendShoutingInfo(Player *shooter, Player* player_to_change)
-{
-    if (player_to_change->health - configs->shootingDamage <= 0){
-        player_to_change->RandomPosition(&configs); // respawn
-        player_to_change->health = 100; 
-    }
-    else {
-        player_to_change->health -= configs->shootingDamage;
-
-        // do some moving of the target
-        float fDirectX = sinf(shooter->rotation);   // Unit vector for ray in shooting direction
-        float fDirectY = cosf(shooter->rotation);
-
-        player_to_change->x += fDirectX * 0.05;
-        player_to_change->y += fDirectY * 0.05;
-    }
-
-    Packet packet;
-    packet.packet_type = SHOOTING;
-    packet.size_of_packet_data = sizeof(player_to_change->health) + sizeof(player_to_change->x) +
-     sizeof(player_to_change->y) + sizeof(player_to_change->rotation);
-
-    packet.packet_data = new char[packet.size_of_packet_data];
-    memcpy(packet.packet_data, &player_to_change->health, sizeof(player_to_change->health));
-    memcpy(packet.packet_data + sizeof(player_to_change->health), &player_to_change->x, sizeof(player_to_change->x));
-    memcpy(packet.packet_data + sizeof(player_to_change->health) + sizeof(player_to_change->x), 
-        &player_to_change->y, sizeof(player_to_change->y));
-    memcpy(packet.packet_data + sizeof(player_to_change->health) + sizeof(player_to_change->x) + sizeof(player_to_change->y), 
-        &player_to_change->rotation, sizeof(player_to_change->rotation));
-
-    size_t packet_size = sizeof(packet.packet_type) + sizeof(packet.size_of_packet_data) + packet.size_of_packet_data;
-    char* packet_data = new char[packet_size];
-    
-    packet.serialize(packet_data);
-    
-    NetworkServices::sendMessage(network->sessions[player_to_change->index], packet_data, packet_size);
-    delete[] packet.packet_data;
-    delete[] packet_data;
-}
-
-bool cross(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, float& x, float& y)
+bool ServerGame::cross(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, float& x, float& y)
 {
 	float Ua, Ub, numerator_a, numerator_b, denominator;
 

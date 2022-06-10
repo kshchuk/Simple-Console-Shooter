@@ -36,7 +36,7 @@ private:
     void sendMovementPackets(Player* player);
 
     // Sends shouting information: decreasing of health and small movement && changes target info
-    void sendShoutingInfo(Player *shooter, Player* player_to_change);
+    void sendShootingInfo(Player *shooter, Player* player_to_change);
 
     // Send Configs to the client
     void sendConfigs(size_t client);
