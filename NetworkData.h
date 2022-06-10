@@ -5,15 +5,11 @@ constexpr size_t MAX_PACKET_SIZE = 1000000;
 
 enum PacketTypes 
 {
-
     INIT_CONNECTION,
 
     MOVEMENT,
 
-    SHOUTING,
-
-    CHANGE_HEALTH,
-
+    SHOOTING,
 };
 
 

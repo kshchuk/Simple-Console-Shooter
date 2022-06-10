@@ -20,6 +20,9 @@ Configs::Configs()
 		depth = 16.0f;
 		speed = 4.0f;
 
+		maxShootingRange = 50;
+		shootingDamage = 33;			
+
 		pWidth = 0.25f;
 		pDepth = 0.17f;
 		pHight = 1.0f;
@@ -90,6 +93,9 @@ bool Configs::readFromFile()
 		depth = j["depth"];
 		speed = j["speed"];
 
+		maxShootingRange = j["maxShootingRange"];
+		shootingDamage = j["shootingDamage"];
+
 		pWidth = j["pWidth"];
 		pDepth = j["pDepth"];
 		pHight = j["pHight"];
@@ -120,6 +126,9 @@ void Configs::saveToFile()
 	j["FOV"] = FOV;
 	j["depth"] = depth;
 	j["speed"] = speed;
+
+	j["maxShootingRange"] = maxShootingRange;
+	j["shootingDamage"] = shootingDamage;
 
 	j["pWidth"] = pWidth;
 	j["pDepth"] = pDepth;

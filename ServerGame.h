@@ -35,8 +35,8 @@ private:
     // Sends location of player to all players
     void sendMovementPackets(Player* player);
 
-    // Sends shouting information: decreasing of health and small movement
-    void sendShoutingInfo(size_t player_index_to_send);
+    // Sends shouting information: decreasing of health and small movement && changes target info
+    void sendShoutingInfo(Player *shooter, Player* player_to_change);
 
     // Send Configs to the client
     void sendConfigs(size_t client);
@@ -52,4 +52,10 @@ private:
 
     // Updates player's position on the map
     void updateMap(Player*);
+
+    // Tests whether there is a hit
+    bool checkShouting(Player* shooter, Player* target);
+
+    // get crossing point
+    bool cross(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, float& x, float& y);
 };

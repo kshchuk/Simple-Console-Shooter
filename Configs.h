@@ -17,6 +17,8 @@ public:
 	float FOV;					// Field of View
 	float depth;				// Maximum rendering distance
 	float speed;				// Walking Speed
+	float maxShootingRange;		
+	int shootingDamage;			
 
 	float pWidth;				// Profile width
 	float pDepth;				// Profile depth
