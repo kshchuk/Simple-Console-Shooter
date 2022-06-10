@@ -21,6 +21,9 @@ ClientGame::ClientGame(char* SERVER_IP)
 // Receive packets
 void ClientGame::update()
 {
+    if (this->player)
+        sendPlayerLocation();
+
     Packet packet;
     int data_length = network->receivePackets(network_data);
 

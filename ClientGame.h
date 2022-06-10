@@ -12,7 +12,7 @@ class ClientGame
 public:
     Configs* config;
 
-    Player* player;
+    Player* player = nullptr;
 
     // Index and player
     std::map<int, Player*> other_players;

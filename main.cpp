@@ -36,7 +36,6 @@ int main()
 	system("PAUSE");
 
 	std::vector<std::vector<bool>> map = conf.map;
-	size_t players_number = 1;
 	Player player(conf); 
 	player.RandomPosition(conf);
 	client->RegisterPlayer(player);
@@ -53,7 +52,7 @@ int main()
 
 	while (true)
 	{
-		client->sendPlayerLocation();
+		client->update();
 
 		// We'll need time differential per frame to calculate modification
 		// to movement speeds, to ensure consistant movement, as ray-tracing
@@ -65,7 +64,7 @@ int main()
 		float fElapsedTime = elapsedTime.count();
 
 		Rendering::CalculatePosition(player, fElapsedTime, map);
-		Rendering::RenderFrame(conf, player, players_number, conf.map, screen, hConsole, dwBytesWritten, tp1, tp2, fElapsedTime);
+		Rendering::RenderFrame(conf, player, conf.map, screen, hConsole, dwBytesWritten, tp1, tp2, fElapsedTime, client->other_players);
 	}
 
 	return 0;

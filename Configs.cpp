@@ -20,8 +20,8 @@ Configs::Configs()
 		depth = 16.0f;			
 		speed = 4.0f;		
 
-		pWidth = 0.2f;
-		pDepth = 0.1f;
+		pWidth = 0.25f;
+		pDepth = 0.17f;
 		pHight = 1.0f;
 
 		map = {
@@ -56,7 +56,7 @@ Configs::Configs(char* config_data)
 	memcpy(this, config_data, sizeof(Configs) - sizeof(map)); // map is corrupted vector
 
 	// Getting map
-	int* imap = (int*)(config_data + sizeof(Configs) + 4);
+	int* imap = (int*)(config_data + sizeof(Configs) - 4);
 
 	map.clear();
 	map.resize(mapHeight);
