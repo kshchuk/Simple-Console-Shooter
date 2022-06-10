@@ -1,0 +1,18 @@
+﻿  Configs.cpp
+C:\Users\lenovo\source\repos\SimpleShooterServer\Configs.cpp(67,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\lenovo\source\repos\SimpleShooterServer\Configs.cpp(68,24): warning C4018: '<': signed/unsigned mismatch
+  NetworkServices.cpp
+  Player.cpp
+C:\Users\lenovo\source\repos\SimpleShooterServer\Player.cpp(18,18): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+C:\Users\lenovo\source\repos\SimpleShooterServer\Player.cpp(19,18): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+C:\Users\lenovo\source\repos\SimpleShooterServer\Player.cpp(20,20): warning C4244: 'argument': conversion from 'float' to 'const unsigned int', possible loss of data
+C:\Users\lenovo\source\repos\SimpleShooterServer\Player.cpp(20,23): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
+C:\Users\lenovo\source\repos\SimpleShooterServer\Player.cpp(22,32): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+  ServerGame.cpp
+C:\Users\lenovo\source\repos\SimpleShooterServer\ServerGame.cpp(99,26): warning C4018: '<': signed/unsigned mismatch
+C:\Users\lenovo\source\repos\SimpleShooterServer\ServerGame.cpp(100,30): warning C4018: '<': signed/unsigned mismatch
+C:\Users\lenovo\source\repos\SimpleShooterServer\ServerGame.cpp(158,18): warning C4018: '<': signed/unsigned mismatch
+  ServerNetwork.cpp
+  main.cpp
+  Generating Code...
+  SimpleShooterServer.vcxproj -> C:\Users\lenovo\source\repos\Simple Shooter\Debug\SimpleShooterServer.exe
