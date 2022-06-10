@@ -327,6 +327,33 @@ void Rendering::RenderFrame(const Configs& conf, Player& player,
 		}
 	}
 
+	// Display the sight
+	size_t map_center_x = conf.screenWidth / 2,
+		map_center_y = conf.screenHeight / 2;
+
+	size_t sight_thickness_v = conf.screenWidth / 100,
+		sight_thickness_h = conf.screenHeight / 50;
+
+	size_t left_top_vline_corner_x = map_center_x - sight_thickness_v / 2,
+		left_top_vline_corner_y = map_center_y - conf.screenHeight / 40,
+		left_bottom_vline_corner_y = map_center_y + conf.screenHeight / 40,
+
+		left_top_hline_corner_x = map_center_x - conf.screenWidth / 80,
+		left_top_hline_corner_y = map_center_y - sight_thickness_h / 2,
+		right_top_hline_corner_x = map_center_x + conf.screenWidth / 80;
+	
+	for (int ny = left_top_vline_corner_y; ny < left_bottom_vline_corner_y; ny++)
+		for (int nx = left_top_vline_corner_x; nx < map_center_x + sight_thickness_v / 2; nx++)
+		{
+			screen[ny * conf.screenWidth + nx] = 0x263B;
+		}
+
+	for (int ny = left_top_hline_corner_y; ny < map_center_y + sight_thickness_h / 2; ny++)
+		for (int nx = left_top_hline_corner_x; nx < right_top_hline_corner_x; nx++)
+		{
+			screen[ny * conf.screenWidth + nx] = 0x263B;
+		}
+
 	// Display Stats
 	swprintf_s(screen, 40, L"X=%3.2f, Y=%3.2f, A=%3.2f FPS=%3.2f ", player.x, player.y, player.rotation, 1.0f / fElapsedTime);
 
