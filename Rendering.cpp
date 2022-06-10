@@ -90,11 +90,11 @@ void Rendering::CalculatePosition(Player& player, const float fElapsedTime, cons
 {
 	// Handle CCW Rotation
 	if (GetAsyncKeyState((unsigned short)'A') & 0x8000)
-		player.rotation -= (player.speed * 0.75f) * fElapsedTime;
+		player.rotation -= (player.speed * 0.5f) * fElapsedTime;
 
 	// Handle CW Rotation
 	if (GetAsyncKeyState((unsigned short)'D') & 0x8000)
-		player.rotation += (player.speed * 0.75f) * fElapsedTime;
+		player.rotation += (player.speed * 0.5f) * fElapsedTime;
 
 	// Handle Forwards movement & collision
 	if (GetAsyncKeyState((unsigned short)'W') & 0x8000)
