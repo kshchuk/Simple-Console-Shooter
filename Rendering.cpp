@@ -355,8 +355,17 @@ void Rendering::RenderFrame(const Configs& conf, Player& player,
 			screen[ny * conf.screenWidth + nx] = 0x263B;
 		}
 
+	// Display the health line
+	size_t line_thickness = conf.screenHeight / 50;
+	size_t line_width = conf.screenWidth * player.health / 100;
+	for (int ny = conf.screenHeight - line_thickness - 1; ny < conf.screenHeight; ny++) {
+		for (int nx = 0; nx < line_width; nx++)
+			screen[ny * conf.screenWidth + nx] = 0x2665;
+		for (int nx = line_width; nx < conf.screenWidth; nx++)
+			screen[ny * conf.screenWidth + nx] = 0x2661;
+	}
 	// Display Stats
-	swprintf_s(screen, 40, L"X=%3.2f, Y=%3.2f, A=%3.2f FPS=%3.2f ", player.x, player.y, player.rotation, 1.0f / fElapsedTime);
+	swprintf_s(screen, 50, L"X=%3.2f, Y=%3.2f, A=%3.2f FPS=%3.2f ", player.x, player.y, player.rotation, 1.0f / fElapsedTime);
 
 	// Display Map
 	for (int nx = 0; nx < conf.mapWidth; nx++)
