@@ -150,6 +150,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Rendering.cpp" />
+    <ClCompile Include="Textures.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientGame.h" />
@@ -160,9 +161,10 @@
     <ClInclude Include="NetworkServices.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Rendering.h" />
+    <ClInclude Include="Textures.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\..\OneDrive\Робочий стіл\gun.txt" />
+    <Text Include="gun.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

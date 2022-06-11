@@ -140,7 +140,7 @@ void Rendering::RenderFrame(const Configs& conf, Player& player,
 	const std::vector<std::vector<bool>>& map, wchar_t* screen,
 	HANDLE hConsole, DWORD dwBytesWritten,
 	std::chrono::system_clock::time_point& tp1, std::chrono::system_clock::time_point& tp2,
-	float fElapsedTime, const std::map<int, Player*>* other_players)
+	float fElapsedTime, Textures* textures, const std::map<int, Player*>* other_players)
 {
 
 	for (int x = 0; x < conf.screenWidth; x++)
@@ -353,15 +353,31 @@ void Rendering::RenderFrame(const Configs& conf, Player& player,
 			screen[ny * conf.screenWidth + nx] = 0x263B;
 		}
 
+
 	// Display the health line
-	size_t line_thickness = conf.screenHeight / 50;
-	size_t line_width = conf.screenWidth * player.health / 100;
-	for (int ny = conf.screenHeight - line_thickness - 1; ny < conf.screenHeight; ny++) {
-		for (int nx = 0; nx < line_width; nx++)
+	size_t health_line_thickness = conf.screenHeight / 50;
+	size_t health_line_width = conf.screenWidth * player.health / 100;
+	for (int ny = conf.screenHeight - health_line_thickness - 1; ny < conf.screenHeight; ny++) {
+		for (int nx = 0; nx < health_line_width; nx++)
 			screen[ny * conf.screenWidth + nx] = 0x2588;
-		for (int nx = line_width; nx < conf.screenWidth; nx++)
+		for (int nx = health_line_width; nx < conf.screenWidth; nx++)
 			screen[ny * conf.screenWidth + nx] = 0x2661;
 	}
+
+	// Distplay the gun
+	int step_x = conf.screenWidth / 70,
+		step_y = conf.screenHeight / 40;
+
+	for (int ty = textures->gun_file_height - 1, y = conf.screenHeight - health_line_thickness*2; ty > 0; ty-=step_y, y--)
+		for (int tx = 1, x = map_center_x + conf.screenWidth / 10; tx < textures->gun_file_width; tx+=step_x, x++) {
+			if (textures->gun[ty][tx-1] != '&')
+				screen[y * conf.screenWidth + x] = textures->gun[ty][tx-1];
+			else
+				continue;
+		}
+
+
+
 	// Display Stats
 	swprintf_s(screen, 50, L"X=%3.2f, Y=%3.2f, A=%3.2f FPS=%3.2f ", player.x, player.y, player.rotation, 1.0f / fElapsedTime);
 

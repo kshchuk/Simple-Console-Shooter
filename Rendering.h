@@ -8,6 +8,8 @@
 #include <io.h>
 #include <fcntl.h>
 #include <cmath>
+#include "Textures.h"
+
 
 float distance(float x1, float y1, float x2, float y2);
 
@@ -30,6 +32,6 @@ public:
 		const std::vector<std::vector<bool>>& map, wchar_t* screen,
 		HANDLE hConsole, DWORD dwBytesWritten,
 		std::chrono::system_clock::time_point& tp1, std::chrono::system_clock::time_point& tp2, 
-		float fElapsedTime, const std::map<int, Player*>* other_players = nullptr);
+		float fElapsedTime, Textures* textures, const std::map<int, Player*>* other_players = nullptr);
 };
 
