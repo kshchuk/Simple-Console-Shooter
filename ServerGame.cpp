@@ -33,10 +33,13 @@ void ServerGame::update()
         // Send configs to the client
         sendConfigs(client_id);
 
+        sendMap(client_id);
+
         Player* p = new Player(*configs);
         p->index = client_id;
 
         players_locations.insert(std::make_pair(client_id, p));
+        last_firing_times.insert(std::make_pair(client_id, std::chrono::system_clock::now()));
 
         client_id++;
     }
@@ -134,21 +137,12 @@ void ServerGame::printMap()
 
 void ServerGame::sendConfigs(size_t client)
 {
-    // Convert map to single array
-    size_t map_size = configs->mapWidth * configs->mapHeight;
-    int* map = new int[map_size];
-    for (size_t i = 0; i < configs->mapHeight; i++)
-        for (size_t j = 0; j < configs->mapWidth; j++) {
-            map[i * configs->mapWidth + j] = (int)configs->map[i][j];
-        }
-
     Packet packet;
     packet.packet_type = INIT_CONNECTION;
-    packet.size_of_packet_data = sizeof(Configs) + map_size*sizeof(int);
+    packet.size_of_packet_data = sizeof(Configs);
 
     packet.packet_data = new char[packet.size_of_packet_data];
     memcpy(packet.packet_data, configs, sizeof(Configs));
-    memcpy(packet.packet_data + sizeof(Configs), map, map_size*sizeof(int));
 
     size_t packet_size = sizeof(packet.packet_type) + sizeof(packet.size_of_packet_data) + packet.size_of_packet_data;
     char* packet_data = new char[packet_size];
@@ -159,7 +153,36 @@ void ServerGame::sendConfigs(size_t client)
 
     printf("Configuration file sended\n");
 
-    delete[] map;
+    delete[] packet_data;
+    delete[] packet.packet_data;
+}
+
+void ServerGame::sendMap(size_t client)
+{
+    // Convert map to single array
+    size_t map_size = configs->mapWidth * configs->mapHeight;
+    bool* map = new bool[map_size];
+    for (size_t i = 0; i < configs->mapHeight; i++)
+        for (size_t j = 0; j < configs->mapWidth; j++) {
+            map[i * configs->mapWidth + j] = configs->map[i][j];
+        }
+
+    Packet packet;
+    packet.packet_type = MAP;
+    packet.size_of_packet_data = map_size;
+
+    packet.packet_data = new char[packet.size_of_packet_data];
+    memcpy(packet.packet_data, map, map_size);
+
+    size_t packet_size = sizeof(packet.packet_type) + sizeof(packet.size_of_packet_data) + packet.size_of_packet_data;
+    char* packet_data = new char[packet_size];
+
+    packet.serialize(packet_data);
+
+    NetworkServices::sendMessage(network->sessions[client], packet_data, packet_size);
+
+    printf("Map sended\n");
+
     delete[] packet_data;
     delete[] packet.packet_data;
 }
@@ -297,6 +320,15 @@ void ServerGame::receiveFromClients()
             {
                 // Update player location
                 size_t player_index = (*iter).first;
+
+                // Check is reloaded
+                std::chrono::system_clock::now();
+                std::chrono::duration<float> difference = std::chrono::system_clock::now() - last_firing_times[player_index];
+                if (difference.count() < configs->gunReloading_seconds)
+                    break;
+                else 
+                    last_firing_times[player_index] = std::chrono::system_clock::now();
+
                 Player* shooter = players_locations[player_index];
                 memcpy(&shooter->x, packet.packet_data, sizeof(shooter->x));
                 memcpy(&shooter->y, packet.packet_data + sizeof(shooter->x), sizeof(shooter->y));

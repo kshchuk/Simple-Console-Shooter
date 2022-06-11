@@ -1,6 +1,4 @@
 ﻿  Configs.cpp
-C:\Users\lenovo\source\repos\SimpleShooterServer\Configs.cpp(100,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\lenovo\source\repos\SimpleShooterServer\Configs.cpp(101,24): warning C4018: '<': signed/unsigned mismatch
   NetworkServices.cpp
   Player.cpp
 C:\Users\lenovo\source\repos\SimpleShooterServer\Player.cpp(19,18): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
@@ -9,11 +7,12 @@ C:\Users\lenovo\source\repos\SimpleShooterServer\Player.cpp(21,21): warning C424
 C:\Users\lenovo\source\repos\SimpleShooterServer\Player.cpp(21,24): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
 C:\Users\lenovo\source\repos\SimpleShooterServer\Player.cpp(23,32): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
   ServerGame.cpp
-C:\Users\lenovo\source\repos\SimpleShooterServer\ServerGame.cpp(99,47): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-C:\Users\lenovo\source\repos\SimpleShooterServer\ServerGame.cpp(100,47): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-C:\Users\lenovo\source\repos\SimpleShooterServer\ServerGame.cpp(140,26): warning C4018: '<': signed/unsigned mismatch
-C:\Users\lenovo\source\repos\SimpleShooterServer\ServerGame.cpp(141,30): warning C4018: '<': signed/unsigned mismatch
-C:\Users\lenovo\source\repos\SimpleShooterServer\ServerGame.cpp(270,18): warning C4018: '<': signed/unsigned mismatch
+C:\Users\lenovo\source\repos\SimpleShooterServer\ServerGame.cpp(102,47): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\lenovo\source\repos\SimpleShooterServer\ServerGame.cpp(103,47): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\lenovo\source\repos\SimpleShooterServer\ServerGame.cpp(165,26): warning C4018: '<': signed/unsigned mismatch
+C:\Users\lenovo\source\repos\SimpleShooterServer\ServerGame.cpp(166,30): warning C4018: '<': signed/unsigned mismatch
+C:\Users\lenovo\source\repos\SimpleShooterServer\ServerGame.cpp(293,18): warning C4018: '<': signed/unsigned mismatch
+C:\Users\lenovo\source\repos\SimpleShooterServer\ServerGame.cpp(325,44): warning C4834: discarding return value of function with 'nodiscard' attribute
   ServerNetwork.cpp
   main.cpp
   Generating Code...

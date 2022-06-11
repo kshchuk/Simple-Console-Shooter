@@ -22,6 +22,11 @@ int main()
     Configs* conf = new Configs;   // Create configs file
 
 	ServerGame* server = new ServerGame(conf);
+
+    while (true)
+    {
+        server->update();
+    }
     
     std::thread two(PrintMapLoop, server);
     std::thread one(ServerLoop, server);

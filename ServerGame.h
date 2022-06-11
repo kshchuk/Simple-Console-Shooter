@@ -5,6 +5,7 @@
 #include "NetworkData.h"
 #include "Player.h"
 #include <vector>
+#include <chrono>
 
 
 class ServerGame
@@ -17,6 +18,9 @@ public:
 
     // players number and player
     std::map<size_t, Player*> players_locations;
+
+    // players number and last firing time
+    std::map<size_t, std::chrono::system_clock::time_point> last_firing_times;
     
     ServerGame(Configs*);
     ~ServerGame(void);
@@ -40,6 +44,9 @@ private:
 
     // Send Configs to the client
     void sendConfigs(size_t client);
+
+    // Send Configs to the client
+    void sendMap(size_t client);
 
     // IDs for the clients connecting for table in ServerNetwork 
     static unsigned int client_id;
