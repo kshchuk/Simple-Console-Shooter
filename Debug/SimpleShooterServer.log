@@ -1,6 +1,6 @@
 ﻿  Configs.cpp
-C:\Users\lenovo\source\repos\SimpleShooterServer\Configs.cpp(71,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\lenovo\source\repos\SimpleShooterServer\Configs.cpp(72,24): warning C4018: '<': signed/unsigned mismatch
+C:\Users\lenovo\source\repos\SimpleShooterServer\Configs.cpp(97,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\lenovo\source\repos\SimpleShooterServer\Configs.cpp(98,24): warning C4018: '<': signed/unsigned mismatch
   NetworkServices.cpp
   Player.cpp
 C:\Users\lenovo\source\repos\SimpleShooterServer\Player.cpp(19,18): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data

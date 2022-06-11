@@ -13,8 +13,8 @@ void PrintMapLoop(ServerGame* server) {
     while (true) 
     {
         server->printMap();
+        Sleep(1000);
     }
-    Sleep(10);
 }
 
 int main()
