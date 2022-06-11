@@ -31,6 +31,6 @@ public:
 		const std::vector<std::vector<bool>>& map, wchar_t* screen,
 		HANDLE hConsole, DWORD dwBytesWritten,
 		std::chrono::system_clock::time_point& tp1, std::chrono::system_clock::time_point& tp2, 
-		float fElapsedTime, const std::map<int, Player*>& other_players);
+		float fElapsedTime, const std::map<int, Player*>* other_players = nullptr);
 };
 

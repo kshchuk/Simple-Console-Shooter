@@ -2,9 +2,10 @@
 #include "NetworkData.h"
 
 
-ClientGame::ClientGame(char* SERVER_IP)
+ClientGame::ClientGame(char* SERVER_IP, bool isMultiplayer)
 {
-    network = new ClientNetwork(SERVER_IP);
+    if (isMultiplayer)
+        network = new ClientNetwork(SERVER_IP);
 }
 
 // Receive packets

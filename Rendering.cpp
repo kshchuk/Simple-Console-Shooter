@@ -132,7 +132,7 @@ void Rendering::CalculatePosition(Player& player, const float fElapsedTime, cons
 	if (GetAsyncKeyState((unsigned short)VK_RETURN) & 0x8000)
 	{
 		std::chrono::duration<float> diff = curTime - lastShootTme;
-		if (diff.count() > 1)
+		if (diff.count() > 1 && client)
 			client->sendShootingInfo();
 		
 	}
@@ -142,7 +142,7 @@ void Rendering::RenderFrame(const Configs& conf, Player& player,
 	const std::vector<std::vector<bool>>& map, wchar_t* screen,
 	HANDLE hConsole, DWORD dwBytesWritten,
 	std::chrono::system_clock::time_point& tp1, std::chrono::system_clock::time_point& tp2,
-	float fElapsedTime, const std::map<int, Player*>& other_players)
+	float fElapsedTime, const std::map<int, Player*>* other_players)
 {
 
 	for (int x = 0; x < conf.screenWidth; x++)
@@ -213,7 +213,8 @@ void Rendering::RenderFrame(const Configs& conf, Player& player,
 				}
 				else // Ray is inbounds so test to see if the ray cell is a player
 				{
-					for (auto iter : other_players) 
+					if (other_players)
+					for (auto iter : *other_players) 
 					{
 						Player* cur_player = iter.second;
 						if (distance(cur_player->x, cur_player->y, player.x, player.y) > conf.depth)	// if player isn't in the reach zone

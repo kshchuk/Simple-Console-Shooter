@@ -9,50 +9,50 @@
 #include <iostream>
 
 
-void setConsoleSize(int FontSize);
-
 
 int main()
 {
-	//CONSOLE_FONT_INFOEX cfi;
-	//cfi.cbSize = sizeof(cfi);
-	//cfi.nFont = 0;
-	//cfi.dwFontSize.X = 4;                   // Width of each character in the font
-	//cfi.dwFontSize.Y = 0;			          // Height
-	//cfi.FontFamily = FF_DONTCARE;
-	//cfi.FontWeight = FW_NORMAL;
-	//wcscpy_s(cfi.FaceName, L"Consolas"); // Choose your font
-	//SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
+	bool isMultiplayer;
 
-	std::cout << "\n	Use localhost IP? (y/n)\n";
-	char* SERVER_IP;
+	std::cout << "\n\n		Multiplayer (m)/Solo (s)\n\n    ";
 	char ans;
-	std::cin >> ans;
-	if (ans == 'y')
-		SERVER_IP = new char[] {"127.0.0.1"};
-	else
+	std::cin >> ans; 
+	ans == 'm' ? isMultiplayer = true : isMultiplayer = false;
+
+	ClientGame* client = nullptr;;
+	char* SERVER_IP = new char[] {"127.0.0.1"};
+
+	if (isMultiplayer)
 	{
-		std::cout << "\n	Server IP:	";
-		std::string str;
-		std::cin >> str;
-		SERVER_IP = new char[str.length()];
-		memcpy(SERVER_IP, str.c_str(), str.length());
-		SERVER_IP[str.length()] = '\0';
+		std::cout << "\n	Use localhost IP? (y/n)\n\n     ";
+
+		std::cin >> ans;
+		if (ans == 'n')
+		{
+			std::cout << "\n	Server IP:	";
+			std::string str;
+			std::cin >> str;
+			SERVER_IP = new char[str.length()];
+			memcpy(SERVER_IP, str.c_str(), str.length());
+			SERVER_IP[str.length()] = '\0';
+		}
+
+		client = new ClientGame(SERVER_IP, isMultiplayer);
+
+		while (!client->gotConfigs)
+			client->update();
+
+		system("PAUSE");
 	}
 
-	ClientGame* client = new ClientGame(SERVER_IP);
-
-	while (!client->gotConfigs)
-		client->update();
-
 	Configs conf;
-
-	system("PAUSE");
 
 	std::vector<std::vector<bool>> map = conf.map;
 	Player player(conf); 
 	player.RandomPosition(conf);
-	client->RegisterPlayer(player);
+
+	if (client)
+		client->RegisterPlayer(player);
 
 
 	// Create Screen Buffer
@@ -68,7 +68,8 @@ int main()
 
 	while (true)
 	{
-		client->update();
+		if (isMultiplayer)
+			client->update();
 
 		// We'll need time differential per frame to calculate modification
 		// to movement speeds, to ensure consistant movement, as ray-tracing
@@ -80,7 +81,22 @@ int main()
 		float fElapsedTime = elapsedTime.count();
 
 		Rendering::CalculatePosition(player, fElapsedTime, map, tp1, lastShootTime, client);
-		Rendering::RenderFrame(conf, player, conf.map, screen, hConsole, dwBytesWritten, tp1, tp2, fElapsedTime, client->other_players);
+		if (isMultiplayer)
+			Rendering::RenderFrame(conf, player, conf.map, screen, hConsole, dwBytesWritten, tp1, tp2, fElapsedTime, &client->other_players);
+		else 
+			Rendering::RenderFrame(conf, player, conf.map, screen, hConsole, dwBytesWritten, tp1, tp2, fElapsedTime);
+
 	}
 	return 0;
 }
+
+
+//CONSOLE_FONT_INFOEX cfi;
+//cfi.cbSize = sizeof(cfi);
+//cfi.nFont = 0;
+//cfi.dwFontSize.X = 4;                   // Width of each character in the font
+//cfi.dwFontSize.Y = 0;			          // Height
+//cfi.FontFamily = FF_DONTCARE;
+//cfi.FontWeight = FW_NORMAL;
+//wcscpy_s(cfi.FaceName, L"Consolas"); // Choose your font
+//SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
