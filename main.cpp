@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "Rendering.h"
 #include <iostream>
+#include <fstream>
 
 
 
@@ -54,7 +55,20 @@ int main()
 	if (client)
 		client->RegisterPlayer(player);
 
+	//// Open and save in the memore gun texture file
+	//std::ifstream gun("gun.txt"); 
+	//std::vector<std::vector<char>> gun_arr;
+	//gun_arr.resize(47);							// 46 lines in file
+	//for (size_t i = 0; i < 47; i++) {
+	//	std::cout << 'n';
+	//	gun_arr[i].resize(202);
+	//	for (size_t j = 0; j < 202; j++) {
+	//		gun >> gun_arr[i][j];
+	//		std::cout << gun_arr[i][j];
+	//	}
+	//}
 
+	system("PAUSE");
 	// Create Screen Buffer
 	wchar_t* screen = new wchar_t[conf.screenWidth * conf.screenHeight];
 	HANDLE hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);

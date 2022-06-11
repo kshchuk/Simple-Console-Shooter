@@ -161,6 +161,9 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Rendering.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\..\OneDrive\Робочий стіл\gun.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
