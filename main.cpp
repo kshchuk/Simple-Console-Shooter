@@ -12,8 +12,6 @@
 
 int main()
 {
-	Textures* textures = new Textures;
-
 	bool isMultiplayer;
 
 	std::cout << "\n\n		Multiplayer (m)/Solo (s)\n\n    ";
@@ -44,8 +42,8 @@ int main()
 		while (!client->gotConfigs || !client->gotMap)
 			client->update();
 
-		system("PAUSE");
 	}
+	system("PAUSE");
 
 	Configs conf;
 
@@ -56,14 +54,22 @@ int main()
 	if (client)
 		client->RegisterPlayer(player);
 
+	Textures* textures = new Textures;
+
 	// Create Screen Buffer
 	wchar_t* screen = new wchar_t[conf.screenWidth * conf.screenHeight];
 	HANDLE hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
 	SetConsoleActiveScreenBuffer(hConsole);
+	//system("PAUSE");
 	DWORD dwBytesWritten = 0;
 
 	auto tp1 = std::chrono::system_clock::now();
 	auto tp2 = std::chrono::system_clock::now();
+
+
+	auto last_firing_time = std::chrono::system_clock::now();
+
+
 
 	while (true)
 	{
@@ -79,23 +85,14 @@ int main()
 		tp1 = tp2;
 		float fElapsedTime = elapsedTime.count();
 
-		Rendering::CalculatePosition(player, fElapsedTime, map, client);
+		Rendering::CalculatePosition(player, conf, fElapsedTime, map, client, last_firing_time);
 		if (isMultiplayer)
-			Rendering::RenderFrame(conf, player, conf.map, screen, hConsole, dwBytesWritten, tp1, tp2, fElapsedTime, textures, &client->other_players);
+			Rendering::RenderFrame(conf, player, conf.map, screen, hConsole, dwBytesWritten, tp1, tp2,
+				fElapsedTime, textures, last_firing_time, &client->other_players);
 		else 
-			Rendering::RenderFrame(conf, player, conf.map, screen, hConsole, dwBytesWritten, tp1, tp2, fElapsedTime, textures);
+			Rendering::RenderFrame(conf, player, conf.map, screen, hConsole, dwBytesWritten, tp1, tp2,
+				fElapsedTime, textures, last_firing_time);
 
 	}
 	return 0;
 }
-
-
-//CONSOLE_FONT_INFOEX cfi;
-//cfi.cbSize = sizeof(cfi);
-//cfi.nFont = 0;
-//cfi.dwFontSize.X = 4;                   // Width of each character in the font
-//cfi.dwFontSize.Y = 0;			          // Height
-//cfi.FontFamily = FF_DONTCARE;
-//cfi.FontWeight = FW_NORMAL;
-//wcscpy_s(cfi.FaceName, L"Consolas"); // Choose your font
-//SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);

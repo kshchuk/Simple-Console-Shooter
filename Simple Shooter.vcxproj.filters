@@ -73,5 +73,14 @@
     <Text Include="gun.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="big_explosion.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="middle_explosion.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="small_explosion.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

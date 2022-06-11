@@ -164,7 +164,10 @@
     <ClInclude Include="Textures.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="big_explosion.txt" />
     <Text Include="gun.txt" />
+    <Text Include="middle_explosion.txt" />
+    <Text Include="small_explosion.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

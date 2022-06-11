@@ -85,7 +85,8 @@ void Rendering::Collision(Player& player, float fElapsedTime, char key, const st
 	}
 }
 
-void Rendering::CalculatePosition(Player& player, const float fElapsedTime, const std::vector<std::vector<bool>>& map, ClientGame* client)
+void Rendering::CalculatePosition(Player& player, Configs& conf, const float fElapsedTime, const std::vector<std::vector<bool>>& map, ClientGame* client, 
+	std::chrono::system_clock::time_point& last_firing_time)
 {
 	// Handle CCW Rotation
 	if (GetAsyncKeyState((unsigned short)'A') & 0x8000)
@@ -130,6 +131,10 @@ void Rendering::CalculatePosition(Player& player, const float fElapsedTime, cons
 	// Handle firing
 	if (GetAsyncKeyState((unsigned short)VK_RETURN) & 0x8000)
 	{
+		std::chrono::duration<float> cur_reloading_time = std::chrono::system_clock::now() - last_firing_time;
+		float fcur_reloading_time = cur_reloading_time.count();
+		if (fcur_reloading_time > conf.gunReloading_seconds)
+			last_firing_time = std::chrono::system_clock::now();
 		if (client) {
 			client->sendShootingInfo();
 		}
@@ -140,7 +145,8 @@ void Rendering::RenderFrame(const Configs& conf, Player& player,
 	const std::vector<std::vector<bool>>& map, wchar_t* screen,
 	HANDLE hConsole, DWORD dwBytesWritten,
 	std::chrono::system_clock::time_point& tp1, std::chrono::system_clock::time_point& tp2,
-	float fElapsedTime, Textures* textures, const std::map<int, Player*>* other_players)
+	float fElapsedTime, Textures* textures, const std::chrono::system_clock::time_point& last_firing_time,
+	const std::map<int, Player*>* other_players)
 {
 
 	for (int x = 0; x < conf.screenWidth; x++)
@@ -364,12 +370,59 @@ void Rendering::RenderFrame(const Configs& conf, Player& player,
 			screen[ny * conf.screenWidth + nx] = 0x2661;
 	}
 
-	// Distplay the gun
-	int step_x = conf.screenWidth / 70,
-		step_y = conf.screenHeight / 40;
+	
+	// Display explosions
+	std::chrono::duration<float> cur_reloading_time = std::chrono::system_clock::now() - last_firing_time;
+	float fcur_reloading_time = cur_reloading_time.count();
 
-	for (int ty = textures->gun_file_height - 1, y = conf.screenHeight - health_line_thickness*2; ty > 0; ty-=step_y, y--)
-		for (int tx = 1, x = map_center_x + conf.screenWidth / 10; tx < textures->gun_file_width; tx+=step_x, x++) {
+	if (fcur_reloading_time > 0 && fcur_reloading_time < 0.1) // Small explosion
+	{
+		int expl_step_x = conf.screenWidth / 70,
+			expl_step_y = conf.screenHeight / 40;
+
+		for (int ty = textures->small_explosion_file_height, y = conf.screenHeight / 4 * 3; ty > 0; ty -= expl_step_y, y--)
+			for (int tx = 1, x = map_center_x + conf.screenWidth / 8; tx < textures->small_explosion_file_width; tx += expl_step_x, x++) {
+				if (textures->small_explosion[ty - 1][tx - 1] != ' ')
+					screen[y * conf.screenWidth + x] = textures->small_explosion[ty - 1][tx - 1];
+				else
+					continue;
+			}
+	}
+	else 
+		if (fcur_reloading_time > 0.1 && fcur_reloading_time < 0.2) // Middle explosion
+		{
+			int expl_step_x = conf.screenWidth / 70,
+				expl_step_y = conf.screenHeight / 40;
+
+			for (int ty = textures->middle_explosion_file_height, y = conf.screenHeight / 4 * 3.2; ty > 0; ty -= expl_step_y, y--)
+				for (int tx = 1, x = map_center_x + conf.screenWidth / 9; tx < textures->middle_explosion_file_width; tx += expl_step_x, x++) {
+					if (textures->middle_explosion[ty - 1][tx - 1] != ' ')
+						screen[y * conf.screenWidth + x] = textures->middle_explosion[ty - 1][tx - 1];
+					else
+						continue;
+				}
+		}
+		else
+			if (fcur_reloading_time > 0.2 && fcur_reloading_time < 0.3) // Big explosion
+			{
+				int expl_step_x = conf.screenWidth / 70,
+					expl_step_y = conf.screenHeight / 40;
+
+				for (int ty = textures->big_explosion_file_height, y = conf.screenHeight / 4 * 3.3; ty > 0; ty -= expl_step_y, y--)
+					for (int tx = 1, x = map_center_x + conf.screenWidth / 10; tx < textures->big_explosion_file_width; tx += expl_step_x, x++) {
+						if (textures->big_explosion[ty - 1][tx - 1] != ' ')
+							screen[y * conf.screenWidth + x] = textures->big_explosion[ty - 1][tx - 1];
+						else
+							continue;
+					}
+			}
+
+	// Distplay the gun
+	int gun_step_x = conf.screenWidth / 70,
+		gun_step_y = conf.screenHeight / 40;
+
+	for (int ty = textures->gun_file_height - 1, y = conf.screenHeight - health_line_thickness*2; ty > 0; ty -= gun_step_y, y--)
+		for (int tx = 1, x = map_center_x + conf.screenWidth / 10; tx < textures->gun_file_width; tx += gun_step_x, x++) {
 			if (textures->gun[ty][tx-1] != '&')
 				screen[y * conf.screenWidth + x] = textures->gun[ty][tx-1];
 			else

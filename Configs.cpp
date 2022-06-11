@@ -8,7 +8,7 @@ Configs::Configs()
 	else  // There's no config file
 	{
 		// defaults
-		screenWidth = 384;
+		screenWidth = 480;
 		screenHeight = 123;
 		mapWidth = 50;
 		mapHeight = 50;
