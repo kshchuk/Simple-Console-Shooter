@@ -85,8 +85,7 @@ void Rendering::Collision(Player& player, float fElapsedTime, char key, const st
 	}
 }
 
-void Rendering::CalculatePosition(Player& player, const float fElapsedTime, const std::vector<std::vector<bool>>& map,
-	const std::chrono::system_clock::time_point& curTime, std::chrono::system_clock::time_point& lastShootTme, ClientGame* client)
+void Rendering::CalculatePosition(Player& player, const float fElapsedTime, const std::vector<std::vector<bool>>& map, ClientGame* client)
 {
 	// Handle CCW Rotation
 	if (GetAsyncKeyState((unsigned short)'A') & 0x8000)
@@ -131,10 +130,9 @@ void Rendering::CalculatePosition(Player& player, const float fElapsedTime, cons
 	// Handle firing
 	if (GetAsyncKeyState((unsigned short)VK_RETURN) & 0x8000)
 	{
-		std::chrono::duration<float> diff = curTime - lastShootTme;
-		if (diff.count() > 1 && client)
+		if (client) {
 			client->sendShootingInfo();
-		
+		}
 	}
 }
 
@@ -360,7 +358,7 @@ void Rendering::RenderFrame(const Configs& conf, Player& player,
 	size_t line_width = conf.screenWidth * player.health / 100;
 	for (int ny = conf.screenHeight - line_thickness - 1; ny < conf.screenHeight; ny++) {
 		for (int nx = 0; nx < line_width; nx++)
-			screen[ny * conf.screenWidth + nx] = 0x2665;
+			screen[ny * conf.screenWidth + nx] = 0x2588;
 		for (int nx = line_width; nx < conf.screenWidth; nx++)
 			screen[ny * conf.screenWidth + nx] = 0x2661;
 	}

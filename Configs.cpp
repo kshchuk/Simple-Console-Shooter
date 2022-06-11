@@ -93,13 +93,18 @@ Configs::Configs(char* config_data)
 	// Getting map
 	int* imap = (int*)(config_data + sizeof(Configs));
 
+	saveToFile();
+}
+
+void Configs::GetMap(char* map_arr)
+{
 	map.clear();
 	map.resize(mapHeight);
 	for (auto& line : map)
 		line.resize(mapWidth);
 	for (size_t i = 0; i < mapHeight; i++)
 		for (size_t j = 0; j < mapWidth; j++)
-			map[i][j] = (bool)imap[i * mapWidth + j];
+			map[i][j] = (bool)map_arr[i * mapWidth + j];
 
 	saveToFile();
 }

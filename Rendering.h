@@ -24,8 +24,7 @@ private:
 public:
 
 	// Getting key commands
-	static void CalculatePosition(Player& player, const float fElapsedTime, const std::vector<std::vector<bool>>& map,
-		const std::chrono::system_clock::time_point& curTime, std::chrono::system_clock::time_point& lastShootTime, ClientGame* client);
+	static void CalculatePosition(Player& player, const float fElapsedTime, const std::vector<std::vector<bool>>& map, ClientGame* client);
 
 	static void RenderFrame(const Configs& conf, Player& player,
 		const std::vector<std::vector<bool>>& map, wchar_t* screen,

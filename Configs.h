@@ -35,8 +35,8 @@ public:
 	std::vector<std::vector<bool>> map;
 
 	Configs();
-
 	Configs(char*);
+	void GetMap(char*);
 
 private:
 	bool readFromFile();

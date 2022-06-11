@@ -38,6 +38,13 @@ void ClientGame::update()
             gotConfigs = true;
             break;
         }
+        case MAP:
+        {
+            config->GetMap(packet.packet_data);
+            printf("Client received map\n");
+            gotMap = true;
+            break;
+        }
         case MOVEMENT:
         {
             int player_index;

@@ -8,6 +8,8 @@ enum PacketTypes
 
     INIT_CONNECTION,
 
+    MAP,
+
     MOVEMENT,
 
     SHOOTING,

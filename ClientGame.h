@@ -21,6 +21,7 @@ public:
     ~ClientGame(void);
 
     bool gotConfigs = false;
+    bool gotMap = false;
 
     ClientNetwork* network;
 
