@@ -151,7 +151,7 @@ void ServerGame::sendConfigs(size_t client)
     
     NetworkServices::sendMessage(network->sessions[client], packet_data, packet_size);
 
-    printf("Configuration file sended\n");
+    printf("Configuration file sent\n");
 
     delete[] packet_data;
     delete[] packet.packet_data;
@@ -181,7 +181,7 @@ void ServerGame::sendMap(size_t client)
 
     NetworkServices::sendMessage(network->sessions[client], packet_data, packet_size);
 
-    printf("Map sended\n");
+    printf("Map sent\n");
 
     delete[] packet_data;
     delete[] packet.packet_data;
