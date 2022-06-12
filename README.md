@@ -3,6 +3,7 @@
 Console settings:
 
 Font size: 5
+
 Console size: 400x123
 
 
