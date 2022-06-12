@@ -418,7 +418,7 @@ void Rendering::RenderFrame(const Configs& conf, Player& player,
 			}
 
 	// Distplay the gun
-	int gun_step_x = conf.screenWidth / 70,
+	int gun_step_x = conf.screenWidth / 90,
 		gun_step_y = conf.screenHeight / 40;
 
 	for (int ty = textures->gun_file_height - 1, y = conf.screenHeight - health_line_thickness*2; ty > 0; ty -= gun_step_y, y--)
