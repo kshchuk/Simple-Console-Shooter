@@ -144,13 +144,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ClientGame.cpp" />
-    <ClCompile Include="ClientNetwork.cpp" />
-    <ClCompile Include="Configs.cpp" />
     <ClCompile Include="NetworkServices.cpp" />
-    <ClCompile Include="Player.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Rendering.cpp" />
-    <ClCompile Include="Textures.cpp" />
+    <ClCompile Include="src\ClientNetwork.cpp" />
+    <ClCompile Include="src\Configs.cpp" />
+    <ClCompile Include="src\Player.cpp" />
+    <ClCompile Include="src\Textures.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientGame.h" />
