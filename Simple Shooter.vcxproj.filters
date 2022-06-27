@@ -24,13 +24,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ClientGame.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="NetworkServices.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Rendering.cpp">
+    <ClCompile Include="src\ClientGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ClientNetwork.cpp">
@@ -39,7 +33,13 @@
     <ClCompile Include="src\Configs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\NetworkServices.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Textures.cpp">
@@ -47,31 +47,31 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ClientGame.h">
-      <Filter>Header Files\network</Filter>
-    </ClInclude>
-    <ClInclude Include="ClientNetwork.h">
-      <Filter>Header Files\network</Filter>
-    </ClInclude>
-    <ClInclude Include="Configs.h">
-      <Filter>Header Files\info</Filter>
-    </ClInclude>
     <ClInclude Include="json.hpp">
       <Filter>Header Files\info</Filter>
     </ClInclude>
-    <ClInclude Include="NetworkData.h">
+    <ClInclude Include="include\network\ClientGame.h">
       <Filter>Header Files\network</Filter>
     </ClInclude>
-    <ClInclude Include="NetworkServices.h">
+    <ClInclude Include="include\info\Configs.h">
+      <Filter>Header Files\info</Filter>
+    </ClInclude>
+    <ClInclude Include="include\info\Player.h">
+      <Filter>Header Files\info</Filter>
+    </ClInclude>
+    <ClInclude Include="include\info\Textures.h">
+      <Filter>Header Files\info</Filter>
+    </ClInclude>
+    <ClInclude Include="include\network\ClientNetwork.h">
       <Filter>Header Files\network</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Header Files\info</Filter>
+    <ClInclude Include="include\network\NetworkData.h">
+      <Filter>Header Files\network</Filter>
     </ClInclude>
-    <ClInclude Include="Textures.h">
-      <Filter>Header Files\info</Filter>
+    <ClInclude Include="include\network\NetworkServices.h">
+      <Filter>Header Files\network</Filter>
     </ClInclude>
-    <ClInclude Include="Rendering.h">
+    <ClInclude Include="include\Rendering.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

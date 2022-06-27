@@ -1,6 +1,5 @@
-#include "include/ClientGame.h" 
-
-#include "NetworkData.h"
+#include "../include/network/ClientGame.h"
+#include "../include/network/NetworkData.h"
 
 
 ClientGame::ClientGame(char* SERVER_IP, bool isMultiplayer)
@@ -72,7 +71,7 @@ void ClientGame::update()
             memcpy(&player->x, packet.packet_data + sizeof(player->health), sizeof(player->x));
             memcpy(&player->y, packet.packet_data + sizeof(player->health) + sizeof(player->x), sizeof(player->y));
             memcpy(&player->rotation, packet.packet_data + sizeof(player->health) + sizeof(player->x) + sizeof(player->y), sizeof(player->rotation));
-            
+
             break;
         }
         default:
@@ -85,7 +84,7 @@ void ClientGame::sendPlayerLocation()
 {
     Packet packet;
     packet.packet_type = MOVEMENT;
-    
+
     packet.size_of_packet_data = sizeof(player->x) + sizeof(player->y) + sizeof(player->rotation);
     packet.packet_data = new char[packet.size_of_packet_data];
 
@@ -109,7 +108,7 @@ void ClientGame::sendShootingInfo()
 {
     Packet packet;
     packet.packet_type = SHOOTING;
-    
+
     packet.size_of_packet_data = sizeof(player->x) + sizeof(player->y) + sizeof(player->rotation);
     packet.packet_data = new char[packet.size_of_packet_data];
 

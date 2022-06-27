@@ -1,4 +1,4 @@
-#include "NetworkServices.h"
+#include "../include/network/NetworkServices.h"
 
 int NetworkServices::sendMessage(SOCKET curSocket, char* message, int messageSize)
 {

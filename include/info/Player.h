@@ -4,6 +4,7 @@
 
 #include "Configs.h"
 
+
 struct Point {
 	float x;
 	float y;

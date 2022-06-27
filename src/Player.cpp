@@ -1,4 +1,4 @@
-#include "Player.h"
+#include "../include/info/Player.h"
 
 
 Player::Player(Configs conf)
@@ -34,7 +34,7 @@ void Player::CaclulatePositions()
 	rightFront_pos.x = pDepth / 2;
 	rightFront_pos.y = -pWidth / 2;
 
-	leftBack_pos.x =- pDepth / 2;
+	leftBack_pos.x = -pDepth / 2;
 	leftBack_pos.y = pWidth / 2;
 
 	rightBack_pos.x = -pDepth / 2;

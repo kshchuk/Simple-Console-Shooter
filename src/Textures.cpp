@@ -1,5 +1,6 @@
-#include "Textures.h"
-#include "string"
+#include "../include/info/Textures.h"
+
+#include <string>
 #include <iostream>
 
 
@@ -19,8 +20,10 @@ Textures::Textures()
 		}
 		gunf.close();
 	}
-	else
+	else {
 		std::cout << "ERROR There is no texture files\n";
+		system("PAUSE");
+	}
 
 
 	std::ifstream s_exp("textures/small_explosion.txt");
@@ -40,7 +43,10 @@ Textures::Textures()
 		s_exp.close();
 	}
 	else
+	{
 		std::cout << "ERROR There is no texture files";
+		system("PAUSE");
+	}
 
 
 	std::ifstream m_exp("textures/middle_explosion.txt");
@@ -61,7 +67,10 @@ Textures::Textures()
 		m_exp.close();
 	}
 	else
+	{
 		std::cout << "ERROR There is no texture files\n";
+		system("PAUSE");
+	}
 
 	std::ifstream b_exp("textures/big_explosion.txt");
 
@@ -80,6 +89,9 @@ Textures::Textures()
 		b_exp.close();
 	}
 	else
+	{
 		std::cout << "ERROR There is no texture files\n";
+		system("PAUSE");
+	}
 
 }

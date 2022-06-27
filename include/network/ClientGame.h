@@ -6,8 +6,8 @@
 #include <map>
 
 #include "ClientNetwork.h"
-#include "Configs.h"
-#include "Player.h"
+#include "../info/Configs.h"
+#include "../info/Player.h"
 
 
 

@@ -1,4 +1,4 @@
-#include "Rendering.h"
+#include "../include/Rendering.h"
 
 
 void Rendering::Collision(Player& player, float fElapsedTime, char key, const std::vector<std::vector<bool>>& map)
@@ -85,7 +85,7 @@ void Rendering::Collision(Player& player, float fElapsedTime, char key, const st
 	}
 }
 
-void Rendering::CalculatePosition(Player& player, Configs& conf, const float fElapsedTime, const std::vector<std::vector<bool>>& map, ClientGame* client, 
+void Rendering::CalculatePosition(Player& player, Configs& conf, const float fElapsedTime, const std::vector<std::vector<bool>>& map, ClientGame* client,
 	std::chrono::system_clock::time_point& last_firing_time)
 {
 	// Handle CCW Rotation
@@ -168,7 +168,7 @@ void Rendering::RenderFrame(const Configs& conf, Player& player,
 
 		// Incrementally cast ray from player, along ray angle, testing for 
 		// intersection with a block or a player
-		while (!bHitWall && !bHitPlayer &&fDistanceToObstacle < player.depth)
+		while (!bHitWall && !bHitPlayer && fDistanceToObstacle < player.depth)
 		{
 			fDistanceToObstacle += fStepSize;
 			float fTestX = player.x + fEyeX * fDistanceToObstacle;
@@ -180,7 +180,7 @@ void Rendering::RenderFrame(const Configs& conf, Player& player,
 				bHitWall = true;			// Just set distance to maximum depth
 				fDistanceToObstacle = player.depth;
 			}
-			else 
+			else
 				// Ray is inbounds so test to see if the ray cell is a wall block
 				if (map[(int)fTestX][(int)fTestY])
 				{
@@ -218,38 +218,38 @@ void Rendering::RenderFrame(const Configs& conf, Player& player,
 				else // Ray is inbounds so test to see if the ray cell is a player
 				{
 					if (other_players)
-					for (auto iter : *other_players) 
-					{
-						Player* cur_player = iter.second;
-						if (distance(cur_player->x, cur_player->y, player.x, player.y) > conf.depth)	// if player isn't in the reach zone
-							continue;
-						else 
+						for (auto iter : *other_players)
 						{
-							cur_player->CaclulatePositions();
-							// Test to see if the ray cell is in the player 
-							// Check all sides of the player
-							if (cross(player.x, player.y, fTestX, fTestY,
-								cur_player->leftFront_pos.x, cur_player->leftFront_pos.y,
-								cur_player->rightFront_pos.x, cur_player->rightFront_pos.y, fTestX, fTestY) ||
-
-								cross(player.x, player.y, fTestX, fTestY,
-									cur_player->leftFront_pos.x, cur_player->leftFront_pos.y,
-									cur_player->leftBack_pos.x, cur_player->leftBack_pos.y, fTestX, fTestY) ||
-
-								cross(player.x, player.y, fTestX, fTestY,
-									cur_player->leftBack_pos.x, cur_player->leftBack_pos.y,
-									cur_player->rightBack_pos.x, cur_player->rightBack_pos.y, fTestX, fTestY) ||
-
-								cross(player.x, player.y, fTestX, fTestY,
-									cur_player->rightBack_pos.x, cur_player->rightBack_pos.y,
-									cur_player->rightFront_pos.x, cur_player->rightFront_pos.y, fTestX, fTestY))
+							Player* cur_player = iter.second;
+							if (distance(cur_player->x, cur_player->y, player.x, player.y) > conf.depth)	// if player isn't in the reach zone
+								continue;
+							else
 							{
-								bHitPlayer = true;
-								break;
+								cur_player->CaclulatePositions();
+								// Test to see if the ray cell is in the player 
+								// Check all sides of the player
+								if (cross(player.x, player.y, fTestX, fTestY,
+									cur_player->leftFront_pos.x, cur_player->leftFront_pos.y,
+									cur_player->rightFront_pos.x, cur_player->rightFront_pos.y, fTestX, fTestY) ||
+
+									cross(player.x, player.y, fTestX, fTestY,
+										cur_player->leftFront_pos.x, cur_player->leftFront_pos.y,
+										cur_player->leftBack_pos.x, cur_player->leftBack_pos.y, fTestX, fTestY) ||
+
+									cross(player.x, player.y, fTestX, fTestY,
+										cur_player->leftBack_pos.x, cur_player->leftBack_pos.y,
+										cur_player->rightBack_pos.x, cur_player->rightBack_pos.y, fTestX, fTestY) ||
+
+									cross(player.x, player.y, fTestX, fTestY,
+										cur_player->rightBack_pos.x, cur_player->rightBack_pos.y,
+										cur_player->rightFront_pos.x, cur_player->rightFront_pos.y, fTestX, fTestY))
+								{
+									bHitPlayer = true;
+									break;
+								}
 							}
 						}
-					}
-					if (bHitPlayer) 
+					if (bHitPlayer)
 					{
 						// To highlight tile boundaries, cast a ray from each corner
 						// of the player, to the camera. The more coincident this ray
@@ -346,7 +346,7 @@ void Rendering::RenderFrame(const Configs& conf, Player& player,
 		left_top_hline_corner_x = map_center_x - conf.screenWidth / 80,
 		left_top_hline_corner_y = map_center_y - sight_thickness_h / 2,
 		right_top_hline_corner_x = map_center_x + conf.screenWidth / 80;
-	
+
 	for (int ny = left_top_vline_corner_y; ny < left_bottom_vline_corner_y; ny++)
 		for (int nx = left_top_vline_corner_x; nx < map_center_x + sight_thickness_v / 2; nx++)
 		{
@@ -370,7 +370,7 @@ void Rendering::RenderFrame(const Configs& conf, Player& player,
 			screen[ny * conf.screenWidth + nx] = 0x2661;
 	}
 
-	
+
 	// Display explosions
 	std::chrono::duration<float> cur_reloading_time = std::chrono::system_clock::now() - last_firing_time;
 	float fcur_reloading_time = cur_reloading_time.count();
@@ -388,7 +388,7 @@ void Rendering::RenderFrame(const Configs& conf, Player& player,
 					continue;
 			}
 	}
-	else 
+	else
 		if (fcur_reloading_time > 0.1 && fcur_reloading_time < 0.2) // Middle explosion
 		{
 			int expl_step_x = conf.screenWidth / 70,
@@ -421,10 +421,10 @@ void Rendering::RenderFrame(const Configs& conf, Player& player,
 	int gun_step_x = conf.screenWidth / 90,
 		gun_step_y = conf.screenHeight / 40;
 
-	for (int ty = textures->gun_file_height - 1, y = conf.screenHeight - health_line_thickness*2; ty > 0; ty -= gun_step_y, y--)
+	for (int ty = textures->gun_file_height - 1, y = conf.screenHeight - health_line_thickness * 2; ty > 0; ty -= gun_step_y, y--)
 		for (int tx = 1, x = map_center_x + conf.screenWidth / 10; tx < textures->gun_file_width; tx += gun_step_x, x++) {
-			if (textures->gun[ty][tx-1] != '&')
-				screen[y * conf.screenWidth + x] = textures->gun[ty][tx-1];
+			if (textures->gun[ty][tx - 1] != '&')
+				screen[y * conf.screenWidth + x] = textures->gun[ty][tx - 1];
 			else
 				continue;
 		}

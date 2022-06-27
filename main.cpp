@@ -7,12 +7,13 @@
 
 #include <iostream>
 
-#include "ClientGame.h"
-#include "ClientNetwork.h"
-#include "Configs.h"
-#include "Player.h"
-#include "Rendering.h"
-#include "Textures.h"
+#include "include/network/ClientGame.h"
+#include "include/network/ClientNetwork.h"
+#include "include/info/Configs.h"
+#include "include/info/Player.h"
+#include "include/info/Textures.h"
+#include "include/Rendering.h"
+
 
 //void GetInfo(bool &isMultiplayer)
 

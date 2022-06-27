@@ -1,5 +1,7 @@
-#include "Configs.h"
+#include "../include/info/Configs.h"
+
 #include <string>
+
 
 Configs::Configs()
 {

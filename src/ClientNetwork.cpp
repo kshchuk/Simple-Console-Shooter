@@ -1,4 +1,6 @@
-#include "ClientNetwork.h"
+#include "../include/network/ClientNetwork.h"
+
+
 
 ClientNetwork::ClientNetwork(char* IP) {
 

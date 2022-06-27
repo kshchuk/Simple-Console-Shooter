@@ -72,15 +72,31 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <AllProjectIncludesArePublic>false</AllProjectIncludesArePublic>
+    <PublicIncludeDirectories>
+    </PublicIncludeDirectories>
+    <PublicModuleDirectories>./include</PublicModuleDirectories>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <AllProjectIncludesArePublic>false</AllProjectIncludesArePublic>
+    <PublicIncludeDirectories>
+    </PublicIncludeDirectories>
+    <PublicModuleDirectories>./include</PublicModuleDirectories>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <AllProjectIncludesArePublic>false</AllProjectIncludesArePublic>
+    <PublicIncludeDirectories>
+    </PublicIncludeDirectories>
+    <PublicModuleDirectories>./include</PublicModuleDirectories>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <AllProjectIncludesArePublic>false</AllProjectIncludesArePublic>
+    <PublicIncludeDirectories>
+    </PublicIncludeDirectories>
+    <PublicModuleDirectories>./include</PublicModuleDirectories>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -93,6 +109,8 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -110,6 +128,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -123,6 +143,8 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -140,28 +162,30 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ClientGame.cpp" />
-    <ClCompile Include="NetworkServices.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Rendering.cpp" />
+    <ClCompile Include="src\ClientGame.cpp" />
     <ClCompile Include="src\ClientNetwork.cpp" />
     <ClCompile Include="src\Configs.cpp" />
+    <ClCompile Include="src\NetworkServices.cpp" />
     <ClCompile Include="src\Player.cpp" />
+    <ClCompile Include="src\Rendering.cpp" />
     <ClCompile Include="src\Textures.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ClientGame.h" />
-    <ClInclude Include="ClientNetwork.h" />
-    <ClInclude Include="Configs.h" />
+    <ClInclude Include="include\info\Configs.h" />
+    <ClInclude Include="include\info\Player.h" />
+    <ClInclude Include="include\info\Textures.h" />
+    <ClInclude Include="include\network\ClientGame.h" />
+    <ClInclude Include="include\network\ClientNetwork.h" />
+    <ClInclude Include="include\network\NetworkData.h" />
+    <ClInclude Include="include\network\NetworkServices.h" />
+    <ClInclude Include="include\Rendering.h" />
     <ClInclude Include="json.hpp" />
-    <ClInclude Include="NetworkData.h" />
-    <ClInclude Include="NetworkServices.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="Rendering.h" />
-    <ClInclude Include="Textures.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="big_explosion.txt" />
