@@ -13,60 +13,72 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\src">
+      <UniqueIdentifier>{d534712a-8012-460a-bc93-45f7a679cbc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include">
+      <UniqueIdentifier>{7b1354eb-7535-4f4e-a70f-72d9e8f6c02b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include\network">
+      <UniqueIdentifier>{ac9b5b11-b3da-47b6-be4b-9ba146960dc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include\info">
+      <UniqueIdentifier>{72aae00d-21d1-470b-86ac-ba63df622329}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ClientGame.cpp">
+      <Filter>Source Files\src</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientNetwork.cpp">
+      <Filter>Source Files\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Configs.cpp">
+      <Filter>Source Files\src</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkServices.cpp">
+      <Filter>Source Files\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source Files\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering.cpp">
+      <Filter>Source Files\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Textures.cpp">
+      <Filter>Source Files\src</Filter>
+    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NetworkServices.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ClientNetwork.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ClientGame.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Rendering.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Configs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Textures.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="json.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NetworkServices.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ClientNetwork.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Configs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ClientGame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Rendering.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\include\network</Filter>
     </ClInclude>
     <ClInclude Include="NetworkData.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\include\network</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkServices.h">
+      <Filter>Header Files\include\network</Filter>
+    </ClInclude>
+    <ClInclude Include="Configs.h">
+      <Filter>Header Files\include\info</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files\include\info</Filter>
     </ClInclude>
     <ClInclude Include="Textures.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\include\info</Filter>
+    </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>Header Files\include\info</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientGame.h">
+      <Filter>Header Files\include\network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
