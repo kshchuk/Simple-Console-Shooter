@@ -1,5 +1,7 @@
 #pragma once
+
 #include <random>
+
 #include "Configs.h"
 
 struct Point {
@@ -26,6 +28,7 @@ public:
 
 	int index;
 	int health;						// min 1, max 100
+
 	// position of siluet (rectangle)
 	Point leftFront_pos;
 	Point rightFront_pos;

@@ -1,10 +1,14 @@
 #pragma once
+
 #include <winsock2.h>
 #include <Windows.h>
+
 #include <map>
+
 #include "ClientNetwork.h"
 #include "Configs.h"
 #include "Player.h"
+
 
 
 class ClientGame

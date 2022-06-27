@@ -1,4 +1,5 @@
 #pragma once
+
 #include <string.h>
 
 constexpr size_t MAX_PACKET_SIZE = 1000000;

@@ -1,14 +1,20 @@
+/*
+* -------------------------------------------------------- Simple Console Shooter ----------------------------------------------------- *
+* 
+* 
+* 
+*/
 
-
+#include <iostream>
 
 #include "ClientGame.h"
 #include "ClientNetwork.h"
 #include "Configs.h"
 #include "Player.h"
 #include "Rendering.h"
-#include <iostream>
 #include "Textures.h"
 
+//void GetInfo(bool &isMultiplayer)
 
 int main()
 {
@@ -47,7 +53,6 @@ int main()
 
 	Configs conf;
 
-	std::vector<std::vector<bool>> map = conf.map;
 	Player player(conf); 
 	player.RandomPosition(conf);
 
@@ -60,7 +65,6 @@ int main()
 	wchar_t* screen = new wchar_t[conf.screenWidth * conf.screenHeight];
 	HANDLE hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
 	SetConsoleActiveScreenBuffer(hConsole);
-	//system("PAUSE");
 	DWORD dwBytesWritten = 0;
 
 	auto tp1 = std::chrono::system_clock::now();
@@ -68,7 +72,6 @@ int main()
 
 
 	auto last_firing_time = std::chrono::system_clock::now();
-
 
 
 	while (true)
@@ -85,7 +88,7 @@ int main()
 		tp1 = tp2;
 		float fElapsedTime = elapsedTime.count();
 
-		Rendering::CalculatePosition(player, conf, fElapsedTime, map, client, last_firing_time);
+		Rendering::CalculatePosition(player, conf, fElapsedTime, conf.map, client, last_firing_time);
 		if (isMultiplayer)
 			Rendering::RenderFrame(conf, player, conf.map, screen, hConsole, dwBytesWritten, tp1, tp2,
 				fElapsedTime, textures, last_firing_time, &client->other_players);

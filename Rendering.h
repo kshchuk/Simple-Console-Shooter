@@ -1,13 +1,16 @@
 #pragma once
-#include "Configs.h"
-#include "Player.h"
-#include "ClientGame.h"
-#include <vector>
-#include <chrono>
+
 #include <Windows.h>
 #include <io.h>
 #include <fcntl.h>
+
+#include <vector>
+#include <chrono>
 #include <cmath>
+
+#include "Configs.h"
+#include "Player.h"
+#include "ClientGame.h"
 #include "Textures.h"
 #include "Configs.h"
 

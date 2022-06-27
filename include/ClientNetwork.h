@@ -1,12 +1,13 @@
 #pragma once
 
 // Networking libraries
+#include <stdio.h> 
 #include <winsock2.h>
 #include <Windows.h>
+#include <ws2tcpip.h>
+
 #include "NetworkServices.h"
 #include "NetworkData.h"
-#include <ws2tcpip.h>
-#include <stdio.h> 
 
 // size of our buffer
 constexpr int DEFAULT_BUFLEN = 512;
