@@ -2,44 +2,40 @@
 
 #include <random>
 
-#include "Configs.h"
+#include "configs.h"
 
-
-struct Point {
-	float x;
-	float y;
-};
-
-class Player
+struct Player
 {
-public:
-	float x;				    // Player Position X
-	float y;				    // Player Position Y
+	struct Point {
+		float x;
+		float y;
+	};
+
+
+	Point pos;						// Player Position
 	float rotation;				// Player Rotation
 
-	const float FOV;				// Field of View
-	const float depth;				// Maximum rendering distance
-	const float speed;				// Walking Speed
+	const float kFOV;				// Field of View
+	const float kDepth;				// Maximum rendering distance
+	const float kSpeed;				// Walking Speed
 
-	float pWidth;				// Profile width
-	float pDepth;				// Profile depth
-	float pHight;				// Profile height
+	float profile_width;				// Profile width
+	float profile_depth;				// Profile depth
+	float profile_height;				// Profile height
 
 	// multiplayer
-
 	int index;
 	int health;						// min 1, max 100
 
 	// position of siluet (rectangle)
-	Point leftFront_pos;
-	Point rightFront_pos;
-	Point leftBack_pos;
-	Point rightBack_pos;
+	Point left_front;
+	Point right_front;
+	Point left_back;
+	Point right_back;
 
+	Player(Configs configs);
 
-	Player(Configs conf);
-
-	void RandomPosition(Configs conf);
+	void RandomPosition(Configs configs);
 
 	// Calculate siluet's rectangel corners positions
 	void CaclulatePositions();

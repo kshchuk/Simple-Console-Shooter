@@ -2,7 +2,7 @@
 
 #include <fstream>
 
-const class Textures
+const struct Textures
 {
 public:
 

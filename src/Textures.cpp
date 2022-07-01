@@ -1,4 +1,4 @@
-#include "../include/info/Textures.h"
+#include "../include/info/textures.h"
 
 #include <string>
 #include <iostream>
