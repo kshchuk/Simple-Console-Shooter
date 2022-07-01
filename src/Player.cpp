@@ -1,4 +1,4 @@
-#include "../include/info/Player.h"
+#include "../include/info/player.h"
 
 
 Player::Player(Configs conf)

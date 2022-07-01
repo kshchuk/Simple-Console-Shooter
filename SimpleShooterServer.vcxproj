@@ -144,20 +144,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Simple Shooter\json.hpp" />
-    <ClInclude Include="include\info\Configs.h" />
-    <ClInclude Include="include\info\Player.h" />
-    <ClInclude Include="include\network\NetworkData.h" />
-    <ClInclude Include="include\network\NetworkServices.h" />
-    <ClInclude Include="include\network\ServerGame.h" />
-    <ClInclude Include="include\network\ServerNetwork.h" />
+    <ClInclude Include="include\info\configs.h" />
+    <ClInclude Include="include\info\player.h" />
+    <ClInclude Include="include\network\network_data.h" />
+    <ClInclude Include="include\network\network_services.h" />
+    <ClInclude Include="include\network\server_game.h" />
+    <ClInclude Include="include\network\server_network.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\Configs.cpp" />
-    <ClCompile Include="src\NetworkServices.cpp" />
-    <ClCompile Include="src\Player.cpp" />
-    <ClCompile Include="src\ServerGame.cpp" />
-    <ClCompile Include="src\ServerNetwork.cpp" />
+    <ClCompile Include="src\configs.cpp" />
+    <ClCompile Include="src\network_services.cpp" />
+    <ClCompile Include="src\player.cpp" />
+    <ClCompile Include="src\server_game.cpp" />
+    <ClCompile Include="src\server_network.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

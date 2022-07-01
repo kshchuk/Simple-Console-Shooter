@@ -1,8 +1,8 @@
 
 #include <thread>
 
-#include "include/network/ServerGame.h"
-#include "include/info/Configs.h"
+#include "include/network/server_game.h"
+#include "include/info/configs.h"
 
 void ServerLoop(ServerGame* server) {
     while (true)
