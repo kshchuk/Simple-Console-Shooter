@@ -6,8 +6,8 @@
 #include <ws2tcpip.h>
 #include <stdio.h> 
 
-#include "NetworkServices.h"
-#include "NetworkData.h"
+#include "network_services.h"
+#include "network_data.h"
 
 // size of our buffer
 constexpr int DEFAULT_BUFLEN = 512;

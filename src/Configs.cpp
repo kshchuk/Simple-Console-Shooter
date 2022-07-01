@@ -1,4 +1,4 @@
-#include "../include/info/Configs.h"
+#include "../include/info/configs.h"
 
 #include <string>
 

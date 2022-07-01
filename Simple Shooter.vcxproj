@@ -168,23 +168,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\ClientGame.cpp" />
-    <ClCompile Include="src\ClientNetwork.cpp" />
-    <ClCompile Include="src\Configs.cpp" />
-    <ClCompile Include="src\NetworkServices.cpp" />
-    <ClCompile Include="src\Player.cpp" />
-    <ClCompile Include="src\Rendering.cpp" />
-    <ClCompile Include="src\Textures.cpp" />
+    <ClCompile Include="src\client_game.cpp" />
+    <ClCompile Include="src\client_network.cpp" />
+    <ClCompile Include="src\configs.cpp" />
+    <ClCompile Include="src\network_services.cpp" />
+    <ClCompile Include="src\player.cpp" />
+    <ClCompile Include="src\rendering.cpp" />
+    <ClCompile Include="src\textures.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\info\Configs.h" />
-    <ClInclude Include="include\info\Player.h" />
-    <ClInclude Include="include\info\Textures.h" />
-    <ClInclude Include="include\network\ClientGame.h" />
-    <ClInclude Include="include\network\ClientNetwork.h" />
-    <ClInclude Include="include\network\NetworkData.h" />
-    <ClInclude Include="include\network\NetworkServices.h" />
-    <ClInclude Include="include\Rendering.h" />
+    <ClInclude Include="include\info\configs.h" />
+    <ClInclude Include="include\info\player.h" />
+    <ClInclude Include="include\info\textures.h" />
+    <ClInclude Include="include\network\client_game.h" />
+    <ClInclude Include="include\network\client_network.h" />
+    <ClInclude Include="include\network\network_data.h" />
+    <ClInclude Include="include\network\network_services.h" />
+    <ClInclude Include="include\rendering.h" />
     <ClInclude Include="json.hpp" />
   </ItemGroup>
   <ItemGroup>

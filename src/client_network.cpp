@@ -1,4 +1,4 @@
-#include "../include/network/ClientNetwork.h"
+#include "../include/network/client_network.h"
 
 
 
@@ -96,7 +96,7 @@ ClientNetwork::ClientNetwork(char* IP) {
 
 int ClientNetwork::receivePackets(char* recvbuf)
 {
-    iResult = NetworkServices::receiveMessage(ConnectSocket, recvbuf, MAX_PACKET_SIZE);
+    iResult = network_services::receiveMessage(ConnectSocket, recvbuf, MAX_PACKET_SIZE);
 
     if (iResult == 0)
     {

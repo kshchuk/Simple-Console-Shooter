@@ -2,7 +2,7 @@
 
 #include <random>
 
-#include "Configs.h"
+#include "configs.h"
 
 
 struct Point {

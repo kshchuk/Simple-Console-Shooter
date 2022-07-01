@@ -30,9 +30,6 @@ public:
 
 	int health = 100;			// default health 
 
-	//char* serverIP = nullptr;			// IP to connect multiplay
-	//char* serverPORT = nullptr;		// PORT to send information
-
 	// Map of the world
 	std::vector<std::vector<bool>> map;
 

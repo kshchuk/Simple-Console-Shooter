@@ -7,12 +7,12 @@
 
 #include <iostream>
 
-#include "include/network/ClientGame.h"
-#include "include/network/ClientNetwork.h"
-#include "include/info/Configs.h"
-#include "include/info/Player.h"
-#include "include/info/Textures.h"
-#include "include/Rendering.h"
+#include "include/network/client_game.h"
+#include "include/network/client_network.h"
+#include "include/info/configs.h"
+#include "include/info/player.h"
+#include "include/info/textures.h"
+#include "include/rendering.h"
 
 
 //void GetInfo(bool &isMultiplayer)
@@ -89,12 +89,12 @@ int main()
 		tp1 = tp2;
 		float fElapsedTime = elapsedTime.count();
 
-		Rendering::CalculatePosition(player, conf, fElapsedTime, conf.map, client, last_firing_time);
+		rendering::CalculatePosition(player, conf, fElapsedTime, conf.map, client, last_firing_time);
 		if (isMultiplayer)
-			Rendering::RenderFrame(conf, player, conf.map, screen, hConsole, dwBytesWritten, tp1, tp2,
+			rendering::RenderFrame(conf, player, conf.map, screen, hConsole, dwBytesWritten, tp1, tp2,
 				fElapsedTime, textures, last_firing_time, &client->other_players);
 		else 
-			Rendering::RenderFrame(conf, player, conf.map, screen, hConsole, dwBytesWritten, tp1, tp2,
+			rendering::RenderFrame(conf, player, conf.map, screen, hConsole, dwBytesWritten, tp1, tp2,
 				fElapsedTime, textures, last_firing_time);
 
 	}

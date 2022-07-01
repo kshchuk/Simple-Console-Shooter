@@ -5,9 +5,9 @@
 
 #include <map>
 
-#include "ClientNetwork.h"
-#include "../info/Configs.h"
-#include "../info/Player.h"
+#include "client_network.h"
+#include "../info/configs.h"
+#include "../info/player.h"
 
 
 

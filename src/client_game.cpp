@@ -1,5 +1,5 @@
-#include "../include/network/ClientGame.h"
-#include "../include/network/NetworkData.h"
+#include "../include/network/client_game.h"
+#include "../include/network/network_data.h"
 
 
 ClientGame::ClientGame(char* SERVER_IP, bool isMultiplayer)
@@ -96,7 +96,7 @@ void ClientGame::sendPlayerLocation()
     char* compressed_packet = new char[packed_size];
     packet.serialize(compressed_packet);
 
-    NetworkServices::sendMessage(network->ConnectSocket, compressed_packet, packed_size);
+    network_services::sendMessage(network->ConnectSocket, compressed_packet, packed_size);
 
     delete[] packet.packet_data;
     delete[] compressed_packet;
@@ -120,7 +120,7 @@ void ClientGame::sendShootingInfo()
     char* compressed_packet = new char[packed_size];
     packet.serialize(compressed_packet);
 
-    NetworkServices::sendMessage(network->ConnectSocket, compressed_packet, packed_size);
+    network_services::sendMessage(network->ConnectSocket, compressed_packet, packed_size);
 
     delete[] packet.packet_data;
     delete[] compressed_packet;
