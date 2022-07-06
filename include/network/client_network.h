@@ -21,19 +21,25 @@ namespace network
     // size of our buffer
     const int kDefaultBufflen = 512;
 
-class ClientNetwork
-{
-public:
+    class ClientNetwork
+    {
+    public:
 
-    // ip/port to connect sockets through 
+        // ip/port to connect sockets through 
+        std::string ip_;
+        std::string port_;
 
-    // for error checking function calls in Winsock library
+        // for error checking function calls in Winsock library
+        int result_;
 
-    // socket for client to connect to server
+        // socket for client to connect to server
+        SOCKET connected_socket_;
 
-    // ctor/dtor
-    ~ClientNetwork(void);
+        // ctor/dtor
+        ClientNetwork(std::string ip, std::string port);
+        ~ClientNetwork(void);
 
-};
+        int ReceivePackets(char*);
+    };
 
 }
