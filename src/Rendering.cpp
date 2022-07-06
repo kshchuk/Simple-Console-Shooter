@@ -164,7 +164,7 @@ namespace rendering
 		for (int x = 0; x < configs->screen_width; x++)
 		{
 			// For each column, calculate the projected ray angle into world space
-			float ray_angle = (player->rotation - player->kFOV / 2.0f) + ((static_cast<float> (x) / static_cast<float> (configs->screen_width)) * player->kFOV);
+			float ray_angle = (player->rotation - player->kFOV / 2.0f) + ((float)x / (float)configs->screen_width) * player->kFOV;
 
 			// Find distance to wall
 			float step_size = 0.1f;		      // Increment size for ray casting, decrease to increase resolution						
@@ -175,26 +175,26 @@ namespace rendering
 			bool hit_player = false;		// Set when ray hits player silhouette
 			bool hit_player_boundary = false;	// Set when ray hits boundary between two sides of player silhouette
 
-			float unit_vector_for_a_ray_X = sinf(ray_angle); // Unit vector for ray in player space
-			float unit_vector_for_a_ray_Y = cosf(ray_angle);
+			float unit_ray_vector_x = sinf(ray_angle); // Unit vector for ray in player space
+			float unit_ray_vector_y = cosf(ray_angle);
 
 			// Incrementally cast ray from player, along ray angle, testing for 
 			// intersection with a block or a player
 			while (!hit_wall && !hit_player && distance_to_obstacle < player->kDepth)
 			{
 				distance_to_obstacle += step_size;
-				float ray_pos_X = player->pos.x + unit_vector_for_a_ray_X * distance_to_obstacle;
-				float ray_pos_Y = player->pos.y + unit_vector_for_a_ray_Y * distance_to_obstacle;
+				float cur_ray_pos_x = player->pos.x + unit_ray_vector_x * distance_to_obstacle;
+				float cur_ray_pos_y = player->pos.y + unit_ray_vector_y * distance_to_obstacle;
 
 				// Test if ray is out of bounds
-				if (ray_pos_X < 0 || ray_pos_X >= configs->map_width || ray_pos_Y < 0 || ray_pos_Y >= configs->map_height)
+				if (cur_ray_pos_x < 0 || cur_ray_pos_x >= configs->map_width || cur_ray_pos_y < 0 || cur_ray_pos_y >= configs->map_height)
 				{
-					hit_wall = true;			// Just set distance to maximum depth
+					hit_wall = true;			// Just set distance to maximum kDepth
 					distance_to_obstacle = player->kDepth;
 				}
 				else
 					// Ray is inbounds so test to see if the ray cell is a wall block
-					if (map[static_cast<int> (ray_pos_X)][static_cast<int> (ray_pos_Y)])
+					if (map[(int)cur_ray_pos_x][(int)cur_ray_pos_y])
 					{
 						// Ray has hit wall
 						hit_wall = true;
@@ -211,10 +211,10 @@ namespace rendering
 							for (int ty = 0; ty < 2; ty++)
 							{
 								// Angle of corner to eye
-								float vy = static_cast<int> (ray_pos_Y + ty - player->pos.y);
-								float vx = static_cast<int> (ray_pos_X + tx - player->pos.x);
+								float vy = (int)cur_ray_pos_y + ty - player->pos.y;
+								float vx = (int)cur_ray_pos_x + tx - player->pos.x;
 								float d = sqrt(vx * vx + vy * vy);
-								float dot = (unit_vector_for_a_ray_X * vx / d) + (unit_vector_for_a_ray_Y * vy / d);
+								float dot = (unit_ray_vector_x * vx / d) + (unit_ray_vector_y * vy / d);
 								p.push_back(std::make_pair(d, dot));
 							}
 
@@ -222,10 +222,10 @@ namespace rendering
 						sort(p.begin(), p.end(), [](const std::pair<float, float>& left, const std::pair<float, float>& right) {return left.first < right.first; });
 
 						// First two/three are closest (we will never see all four)
-						float fBound = 0.01;
-						if (acos(p.at(0).second) < fBound) hit_wall_boundary = true;
-						if (acos(p.at(1).second) < fBound) hit_wall_boundary = true;
-						if (acos(p.at(2).second) < fBound) hit_wall_boundary = true;
+						float bound = 0.01;
+						if (acos(p.at(0).second) < bound) hit_wall_boundary = true;
+						if (acos(p.at(1).second) < bound) hit_wall_boundary = true;
+						if (acos(p.at(2).second) < bound) hit_wall_boundary = true;
 					}
 					else // Ray is inbounds so test to see if the ray cell is a player
 					{
@@ -233,30 +233,28 @@ namespace rendering
 							for (auto iter : *other_players)
 							{
 								Player* cur_player = iter.second;
-								if (rendering::distance(cur_player->pos.x, cur_player->pos.y, player->pos.x, player->pos.y) > configs->depth)	// if player isn't in the reach zone
+								if (distance(cur_player->pos.x, cur_player->pos.y, player->pos.x, player->pos.y) > configs->depth)	// if player isn't in the reach zone
 									continue;
 								else
 								{
 									cur_player->CaclulatePositions();
-
 									// Test to see if the ray cell is in the player 
 									// Check all sides of the player
-
-									if (rendering::cross(player->pos.x, player->pos.y, ray_pos_X, ray_pos_Y,
+									if (cross(player->pos.x, player->pos.y, cur_ray_pos_x, cur_ray_pos_y,
 										cur_player->left_front.x, cur_player->left_front.y,
-										cur_player->right_front.x, cur_player->right_front.y, ray_pos_X, ray_pos_Y) ||
+										cur_player->right_front.x, cur_player->right_front.y, cur_ray_pos_x, cur_ray_pos_y) ||
 
-										rendering::cross(player->pos.x, player->pos.y, ray_pos_X, ray_pos_Y,
+										cross(player->pos.x, player->pos.y, cur_ray_pos_x, cur_ray_pos_y,
 											cur_player->left_front.x, cur_player->left_front.y,
-											cur_player->left_back.x, cur_player->left_back.y, ray_pos_X, ray_pos_Y) ||
+											cur_player->left_back.x, cur_player->left_back.y, cur_ray_pos_x, cur_ray_pos_y) ||
 
-										rendering::cross(player->pos.x, player->pos.y, ray_pos_X, ray_pos_Y,
+										cross(player->pos.x, player->pos.y, cur_ray_pos_x, cur_ray_pos_y,
 											cur_player->left_back.x, cur_player->left_back.y,
-											cur_player->right_back.x, cur_player->right_back.y, ray_pos_X, ray_pos_Y) ||
+											cur_player->right_back.x, cur_player->right_back.y, cur_ray_pos_x, cur_ray_pos_y) ||
 
-										rendering::cross(player->pos.x, player->pos.y, ray_pos_X, ray_pos_Y,
+										cross(player->pos.x, player->pos.y, cur_ray_pos_x, cur_ray_pos_y,
 											cur_player->right_back.x, cur_player->right_back.y,
-											cur_player->right_front.x, cur_player->right_front.y, ray_pos_X, ray_pos_Y))
+											cur_player->right_front.x, cur_player->right_front.y, cur_ray_pos_x, cur_ray_pos_y))
 									{
 										hit_player = true;
 										break;
@@ -277,10 +275,10 @@ namespace rendering
 								for (int ty = 0; ty < 2; ty++)
 								{
 									// Angle of corner to eye
-									float vy = ray_pos_Y + ty - player->pos.y;
-									float vx = ray_pos_X + tx - player->pos.x;
+									float vy = cur_ray_pos_y + ty - player->pos.y;
+									float vx = cur_ray_pos_x + tx - player->pos.x;
 									float d = sqrt(vx * vx + vy * vy);
-									float dot = (unit_vector_for_a_ray_X * vx / d) + (unit_vector_for_a_ray_Y * vy / d);
+									float dot = (unit_ray_vector_x * vx / d) + (unit_ray_vector_y * vy / d);
 									p.push_back(std::make_pair(d, dot));
 								}
 
@@ -288,67 +286,67 @@ namespace rendering
 							sort(p.begin(), p.end(), [](const std::pair<float, float>& left, const std::pair<float, float>& right) {return left.first < right.first; });
 
 							// First two/three are closest (we will never see all four)
-							float fBound = 0.01;
-							if (acos(p.at(0).second) < fBound) hit_player_boundary = true;
-							if (acos(p.at(1).second) < fBound) hit_player_boundary = true;
-							if (acos(p.at(2).second) < fBound) hit_player_boundary = true;
+							float bound = 0.01;
+							if (acos(p.at(0).second) < bound) hit_player_boundary = true;
+							if (acos(p.at(1).second) < bound) hit_player_boundary = true;
+							if (acos(p.at(2).second) < bound) hit_player_boundary = true;
 						}
 					}
 			}
 
 			// Calculate distance to ceiling and floor
-			int nCeiling = static_cast<float> (configs->screen_height / 2.0) - configs->screen_height / distance_to_obstacle;
-			int nFloor = configs->screen_height - nCeiling;
+			int celling_dist = (float)(configs->screen_height / 2.0) - configs->screen_height / ((float)distance_to_obstacle);
+			int floor_dist = configs->screen_height - celling_dist;
 
-			short nShade = ' ';
+			short pixel = ' ';
 
 			if (!hit_player)
 			{
 				// Shader walls based on distance
-				if (distance_to_obstacle <= player->kDepth / 4.0f)			nShade = 0x2588;	// Very close	
-				else if (distance_to_obstacle < player->kDepth / 3.0f)		nShade = 0x2593;
-				else if (distance_to_obstacle < player->kDepth / 2.0f)		nShade = 0x2592;
-				else if (distance_to_obstacle < player->kDepth)			nShade = 0x2591;
-				else													nShade = ' ';		// Too far away
+				if (distance_to_obstacle <= player->kDepth / 4.0f)			pixel = 0x2588;	// Very close	
+				else if (distance_to_obstacle < player->kDepth / 3.0f)		pixel = 0x2593;
+				else if (distance_to_obstacle < player->kDepth / 2.0f)		pixel = 0x2592;
+				else if (distance_to_obstacle < player->kDepth)				pixel = 0x2591;
+				else														pixel = ' ';		// Too far away
 
-				if (hit_wall_boundary)		nShade = ' '; // Black it out
+				if (hit_wall_boundary)		pixel = ' '; // Black it out
 			}
 			else
 			{
 				// Shader player based on distance
-				if (distance_to_obstacle <= player->kDepth / 4.0f)			nShade = 0x2584;	// Very close	
-				else if (distance_to_obstacle < player->kDepth / 3.0f)		nShade = 0x2663;
-				else if (distance_to_obstacle < player->kDepth / 2.0f)		nShade = 0x25BC;
-				else if (distance_to_obstacle < player->kDepth)			nShade = 0x2642;
-				else													nShade = ' ';		// Too far away
+				if (distance_to_obstacle <= player->kDepth / 4.0f)			pixel = 0x2584;	// Very close	
+				else if (distance_to_obstacle < player->kDepth / 3.0f)		pixel = 0x2663;
+				else if (distance_to_obstacle < player->kDepth / 2.0f)		pixel = 0x25BC;
+				else if (distance_to_obstacle < player->kDepth)				pixel = 0x2642;
+				else														pixel = ' ';		// Too far away
 
-				if (hit_player_boundary)		nShade = ' '; // make border
+				if (hit_player_boundary)		pixel = ' '; // make border
 			}
 
 			for (int y = 0; y < configs->screen_height; y++)
 			{
 				// Each Row
-				if (y <= nCeiling)
+				if (y <= celling_dist)
 					screen[y * configs->screen_width + x] = ' ';
-				else if (y > nCeiling && y <= nFloor)
-					screen[y * configs->screen_width + x] = nShade;
+				else if (y > celling_dist && y <= floor_dist)
+					screen[y * configs->screen_width + x] = pixel;
 				else // Floor
 				{
 					// Shade floor based on distance
 					float b = 1.0f - (((float)y - configs->screen_height / 2.0f) / ((float)configs->screen_height / 2.0f));
-					if (b < 0.25)		nShade = '#';
-					else if (b < 0.5)	nShade = 'x';
-					else if (b < 0.75)	nShade = '.';
-					else if (b < 0.9)	nShade = '-';
-					else				nShade = ' ';
-					screen[y * configs->screen_width + x] = nShade;
+					if (b < 0.25)		pixel = '#';
+					else if (b < 0.5)	pixel = 'x';
+					else if (b < 0.75)	pixel = '.';
+					else if (b < 0.9)	pixel = '-';
+					else				pixel = ' ';
+					screen[y * configs->screen_width + x] = pixel;
 				}
 			}
 		}
 
 		// Display the sight
 		size_t map_center_x = configs->screen_width / 2,
-			map_center_y = configs->screen_height / 2;
+			   map_center_y = configs->screen_height / 2;
 
 		size_t sight_thickness_v = configs->screen_width / 100,
 			sight_thickness_h = configs->screen_height / 50;
@@ -432,7 +430,7 @@ namespace rendering
 				}
 
 		// Distplay the gun
-		int gun_step_x = configs->screen_width / 90,
+		int gun_step_x = configs->screen_width / 70,
 			gun_step_y = configs->screen_height / 40;
 
 		for (int ty = textures->gun_file_height - 1, y = configs->screen_height - health_line_thickness * 2; ty > 0; ty -= gun_step_y, y--)

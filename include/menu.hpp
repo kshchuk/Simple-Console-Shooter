@@ -151,6 +151,30 @@ void ServerMode()
 	Textures* textures = new Textures();
 	Configs* configs = new Configs();
 	Player* player = new Player(*configs);
+
+	system("cls");
+
+	std::cout << "\n Server ip:port :  " << configs->server_ip << ":" << configs->default_port << std::endl <<
+		"\n (1) - Connect" <<
+		"\n (2) - Edit\n";
+
+	int ans;
+	std::cin >> ans;
+
+	switch (ans)
+	{
+	case 1:
+		break;
+	case 2:
+	{
+		configs->set_server_ip();
+		configs->set_port();
+		configs->SaveToFile();
+	}
+	default:
+		break;
+	}
+
 	network::ClientGame* client = new network::ClientGame(configs);
 
 	while (!client->got_configs_ || !client->got_map_)

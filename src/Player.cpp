@@ -6,8 +6,9 @@ Player::Player(Configs configs)
 {
 	pos.x = configs.playerX;
 	pos.y = configs.playerY;
-	rotation = 0;
-	health = 100;
+	rotation = configs.playerA;
+	health = configs.health;
+
 	profile_width = configs.profile_width;
 	profile_height = configs.profile_height;
 	profile_depth = configs.profile_depth;

@@ -208,6 +208,18 @@ void Configs::SaveToFile()
 	json_file.close();
 };
 
+void Configs::set_server_ip()
+{
+	std::cout << "\n New IP: ";
+	std::cin >> server_ip;
+}
+
+void Configs::set_port()
+{
+	std::cout << "\n New port: ";
+	std::cin >> default_port;
+}
+
 void Configs::PrintAllSettings()
 {
 	std::cout << "\n			Game settings:" <<

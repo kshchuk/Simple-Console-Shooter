@@ -72,6 +72,9 @@ const struct Configs
 	// Gets configs from binary
 	Configs(char* network_data);
 
+	void set_server_ip();
+	void set_port();
+
 	// Gets map from binary
 	void GetMap(char* map_data);
 
