@@ -5,45 +5,46 @@
 #include <ws2tcpip.h>
 
 #include <map>
+#include <string>
 
 #include "network_services.h"
 #include "network_data.h"
 
 
-
 #pragma comment (lib, "Ws2_32.lib")
 
-constexpr int DEFAULT_BUFLEN = 512;
-constexpr char DEFAULT_PORT[] = "6881";
-
-
-class ServerNetwork
+namespace network
 {
-public:
+    const int kDefaultBuflen = 512;
 
-    ServerNetwork(void);
-    ~ServerNetwork(void);
+    class ServerNetwork
+    {
+    public:
 
-    // Socket to listen for new connections
-    SOCKET ListenSocket;
+        // Socket to listen for new connections
+        SOCKET listen_socket_;
 
-    // Socket to give to the clients
-    SOCKET ClientSocket;
+        // Socket to give to the clients
+        SOCKET client_socket_;
 
-    // for error checking return values
-    int iResult;
+        // For error checking return values
+        int connect_result_;
 
-    // table to keep track of each client's socket
-    std::map<unsigned int, SOCKET> sessions;
+        // Table to keep track of each client's socket
+        std::map<unsigned int, SOCKET> sessions_;
 
-    // accept new connections
-    bool acceptNewClient(unsigned int& id);
+        ServerNetwork(std::string port);
+        ~ServerNetwork(void);
 
-    // receive incoming data
-    int receiveData(unsigned int client_id, char* recvbuf);
+        // Accept new connections
+        bool AcceptNewClient(unsigned int& id);
 
-    // send data to all clients
-    void sendToAll(char* packets, int totalSize);
+        // Receive incoming data
+        int ReceiveData(unsigned int client_id, char* recvbuf);
 
-    char* GetMyPublicIP();
-};
+        // Send data to all clients
+        void SendToAll(char* packets, int totalSize);
+
+        char* GetMyPublicIP();
+    };
+}

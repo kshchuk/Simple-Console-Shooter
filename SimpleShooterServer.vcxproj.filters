@@ -42,6 +42,9 @@
     <ClInclude Include="include\network\server_network.h">
       <Filter>Header Files\network</Filter>
     </ClInclude>
+    <ClInclude Include="include\menu.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\configs.cpp">

@@ -7,385 +7,389 @@
 #include "../include/info/player.h"
 
 
-unsigned int ServerGame::client_id;
-
-ServerGame::ServerGame(Configs* conf)
+namespace network
 {
-    // assign game configs (map, speed, etc)
-    configs = conf;
+    unsigned int ServerGame::client_id_;
 
-    // id's to assign clients for our table
-    client_id = 0;
-
-    // set up the server network to listen 
-    network = new ServerNetwork();
-
-    real_map.resize(conf->mapHeight);
-    for (int i = 0; i < conf->mapHeight; i++) {
-        real_map[i].resize(conf->mapWidth);
-        for (int j = 0; j < conf->mapWidth; j++)
-            real_map[i][j] = conf->map[i][j] ? '#' : ' ';
-    }
-}
-
-void ServerGame::update()
-{
-    // get new clients
-    if (network->acceptNewClient(client_id))
+    ServerGame::ServerGame(Configs* configs)
     {
-        printf("Client %d has been connected to the server\n", client_id);
+        // Assign game configs (map, speed, etc)
+        configs_ = configs;
 
-        // Send configs to the client
-        sendConfigs(client_id);
+        // Id's to assign clients for our table
+        client_id_ = 0;
 
-        sendMap(client_id);
+        // Set up the server network to listen 
+        network_ = new ServerNetwork(configs->default_port);
 
-        Player* p = new Player(*configs);
-        p->index = client_id;
-
-        players_locations.insert(std::make_pair(client_id, p));
-        last_firing_times.insert(std::make_pair(client_id, std::chrono::system_clock::now()));
-
-        client_id++;
-    }
-    receiveFromClients();
-}
-
-void ServerGame::sendMovementPackets(Player* player)
-{
-    // send index and coordinates of the player to other players
-
-    Packet packet;
-    packet.packet_type = MOVEMENT;
-
-    packet.size_of_packet_data = sizeof(player->index) + sizeof(player->x) + sizeof(player->y) + sizeof(player->rotation);
-    packet.packet_data = new char[packet.size_of_packet_data];
-
-    memcpy(packet.packet_data, &player->index, sizeof(player->index));
-    memcpy(packet.packet_data + sizeof(player->index), &player->x, sizeof(player->x));
-    memcpy(packet.packet_data + sizeof(player->index) + sizeof(player->x), &player->y, sizeof(player->y));
-    memcpy(packet.packet_data + sizeof(player->index) + sizeof(player->x) + sizeof(player->y), &player->rotation, sizeof(player->rotation));
-
-    size_t packet_size = packet.size_of_packet_data + sizeof(packet.packet_type) + sizeof(packet.packet_data);
-    char* compressed_packet = new char[packet_size];
-
-    packet.serialize(compressed_packet);
-
-    std::map<unsigned int, SOCKET>::iterator iter;
-    for (iter = network->sessions.begin(); iter != network->sessions.end(); iter++)
-    {
-        int client_index = (*iter).first;
-
-        // In case we don't need to send data to the same client
-        if (client_index == player->index)
-            continue;
-        else
-        {
-            network_services::sendMessage((*iter).second, compressed_packet, packet_size);
+        real_map_.resize(configs->map_height);
+        for (int i = 0; i < configs->map_height; i++) {
+            real_map_[i].resize(configs->map_width);
+            for (int j = 0; j < configs->map_width; j++)
+                real_map_[i][j] = configs->map[i][j] ? '#' : ' ';
         }
     }
 
-    delete[] compressed_packet;
-    delete[] packet.packet_data;
-
-}
-
-// Sends shouting information: new health and small movement (0.05) or return player to spawn
-void ServerGame::sendShootingInfo(Player* shooter, Player* player_to_change)
-{
-    if (player_to_change->health - configs->shootingDamage <= 0) {
-        player_to_change->RandomPosition(configs); // respawn
-        player_to_change->health = 100;
-    }
-    else {
-        player_to_change->health -= configs->shootingDamage;
-
-        // do some moving of the target
-        float fDirectX = sinf(shooter->rotation);   // Unit vector for ray in shooting direction
-        float fDirectY = cosf(shooter->rotation);
-
-        player_to_change->x += fDirectX * 0.05;
-        player_to_change->y += fDirectY * 0.05;
-    }
-
-    Packet packet;
-    packet.packet_type = SHOOTING;
-    packet.size_of_packet_data = sizeof(player_to_change->health) + sizeof(player_to_change->x) +
-        sizeof(player_to_change->y) + sizeof(player_to_change->rotation);
-
-    packet.packet_data = new char[packet.size_of_packet_data];
-    memcpy(packet.packet_data, &player_to_change->health, sizeof(player_to_change->health));
-    memcpy(packet.packet_data + sizeof(player_to_change->health), &player_to_change->x, sizeof(player_to_change->x));
-    memcpy(packet.packet_data + sizeof(player_to_change->health) + sizeof(player_to_change->x),
-        &player_to_change->y, sizeof(player_to_change->y));
-    memcpy(packet.packet_data + sizeof(player_to_change->health) + sizeof(player_to_change->x) + sizeof(player_to_change->y),
-        &player_to_change->rotation, sizeof(player_to_change->rotation));
-
-    size_t packet_size = sizeof(packet.packet_type) + sizeof(packet.size_of_packet_data) + packet.size_of_packet_data;
-    char* packet_data = new char[packet_size];
-
-    packet.serialize(packet_data);
-
-    network_services::sendMessage(network->sessions[player_to_change->index], packet_data, packet_size);
-    delete[] packet.packet_data;
-    delete[] packet_data;
-}
-void ServerGame::printMap()
-{
-    system("cls");
-    for (auto& line : real_map) {
-        printf("\n");
-        for (auto& elem : line)
-            printf("%c", elem);
-    }
-}
-
-void ServerGame::sendConfigs(size_t client)
-{
-    Packet packet;
-    packet.packet_type = INIT_CONNECTION;
-    packet.size_of_packet_data = sizeof(Configs);
-
-    packet.packet_data = new char[packet.size_of_packet_data];
-    memcpy(packet.packet_data, configs, sizeof(Configs));
-
-    size_t packet_size = sizeof(packet.packet_type) + sizeof(packet.size_of_packet_data) + packet.size_of_packet_data;
-    char* packet_data = new char[packet_size];
-
-    packet.serialize(packet_data);
-
-    network_services::sendMessage(network->sessions[client], packet_data, packet_size);
-
-    printf("Configuration file sent\n");
-
-    delete[] packet_data;
-    delete[] packet.packet_data;
-}
-
-void ServerGame::sendMap(size_t client)
-{
-    // Convert map to single array
-    size_t map_size = configs->mapWidth * configs->mapHeight;
-    bool* map = new bool[map_size];
-    for (size_t i = 0; i < configs->mapHeight; i++)
-        for (size_t j = 0; j < configs->mapWidth; j++) {
-            map[i * configs->mapWidth + j] = configs->map[i][j];
-        }
-
-    Packet packet;
-    packet.packet_type = MAP;
-    packet.size_of_packet_data = map_size;
-
-    packet.packet_data = new char[packet.size_of_packet_data];
-    memcpy(packet.packet_data, map, map_size);
-
-    size_t packet_size = sizeof(packet.packet_type) + sizeof(packet.size_of_packet_data) + packet.size_of_packet_data;
-    char* packet_data = new char[packet_size];
-
-    packet.serialize(packet_data);
-
-    network_services::sendMessage(network->sessions[client], packet_data, packet_size);
-
-    printf("Map sent\n");
-
-    delete[] packet_data;
-    delete[] packet.packet_data;
-}
-
-void ServerGame::updateMap(Player* player)
-{
-    // Replace player index in the map
-    for (size_t i = 0; i < real_map.size(); i++)
-        for (size_t j = 0; j < real_map[i].size(); j++)
-            if (real_map[i][j] == player->index + '0') {
-                real_map[i][j] = configs->map[i][j] ? '#' : ' ';
-                real_map[(int)player->x][(int)player->y] = player->index + '0';
-                return;
-            }
-    // if not found - add player to map
-    real_map[(int)player->x][(int)player->y] = player->index + '0';
-}
-
-bool ServerGame::checkShouting(Player* shooter, Player* target)
-{
-    target->CaclulatePositions();
-
-    bool bHitPlayer = false;		// Set when ray hits player silhouette
-    bool bHitWall = false;			// Set when ray hits wall block
-
-    float fEyeX = sinf(shooter->rotation);   // Unit vector for ray in player space
-    float fEyeY = cosf(shooter->rotation);
-
-    // Crosing point
-    float fTestX = shooter->x + fEyeX * configs->maxShootingRange;
-    float fTestY = shooter->y + fEyeY * configs->maxShootingRange;
-
-    // Check whether the ray crosses the silhoete
-    if (cross(shooter->x, shooter->y, fTestX, fTestY,
-        target->leftFront_pos.x, target->leftFront_pos.y,
-        target->rightFront_pos.x, target->rightFront_pos.y, fTestX, fTestY) ||
-        cross(shooter->x, shooter->y, fTestX, fTestY,
-            target->leftFront_pos.x, target->leftFront_pos.y,
-            target->leftBack_pos.x, target->leftBack_pos.y, fTestX, fTestY) ||
-        cross(shooter->x, shooter->y, fTestX, fTestY,
-            target->leftBack_pos.x, target->leftBack_pos.y,
-            target->rightBack_pos.x, target->rightBack_pos.y, fTestX, fTestY) ||
-        cross(shooter->x, shooter->y, fTestX, fTestY,
-            target->rightBack_pos.x, target->rightBack_pos.y,
-            target->rightFront_pos.x, target->rightFront_pos.y, fTestX, fTestY))
+    void ServerGame::update()
     {
-        float fStepSize = 0.1f;		            // Increment size for ray casting, decrease to increase resolution						
-        float fDistanceToObstacle = 0.0f;       //	
-
-        // Incrementally cast ray from player, along ray angle, testing for 
-        // intersection with a block or a player
-        while (!bHitWall && !bHitPlayer && fDistanceToObstacle < configs->maxShootingRange)
+        // Get new clients
+        if (network_->AcceptNewClient(client_id_))
         {
-            fDistanceToObstacle += fStepSize;
-            fTestX = shooter->x + fEyeX * fDistanceToObstacle;
-            fTestY = shooter->y + fEyeY * fDistanceToObstacle;
+            printf("Client %d has been connected to the server\n", client_id_);
 
-            // Test if ray is out of bounds
-            if (fTestX < 0 || fTestX >= configs->mapWidth || fTestY < 0 || fTestY >= configs->mapHeight)
+            // Send configs to the client
+            SendConfigs(client_id_);
+
+            SendMap(client_id_);
+
+            Player* p = new Player(*configs_);
+            p->index = client_id_;
+
+            players_locations_.insert(std::make_pair(client_id_, p));
+            last_firing_times_.insert(std::make_pair(client_id_, std::chrono::system_clock::now()));
+
+            client_id_++;
+        }
+        ReceiveFromClients();
+    }
+
+    void ServerGame::SendMovementPackets(Player* player)
+    {
+        // Send index and coordinates of the player to other players
+
+        Packet packet;
+        packet.packet_type = kMovement;
+
+        packet.size_of_packet_data = sizeof(player->index) + sizeof(player->pos.x) + sizeof(player->pos.y) + sizeof(player->rotation);
+        packet.packet_data = new char[packet.size_of_packet_data];
+
+        memcpy(packet.packet_data, &player->index, sizeof(player->index));
+        memcpy(packet.packet_data + sizeof(player->index), &player->pos.x, sizeof(player->pos.x));
+        memcpy(packet.packet_data + sizeof(player->index) + sizeof(player->pos.x), &player->pos.y, sizeof(player->pos.y));
+        memcpy(packet.packet_data + sizeof(player->index) + sizeof(player->pos.x) + sizeof(player->pos.y), &player->rotation, sizeof(player->rotation));
+
+        size_t packet_size = packet.size_of_packet_data + sizeof(packet.packet_type) + sizeof(packet.packet_data);
+        char* compressed_packet = new char[packet_size];
+
+        packet.serialize(compressed_packet);
+
+        std::map<unsigned int, SOCKET>::iterator iter;
+        for (iter = network_->sessions_.begin(); iter != network_->sessions_.end(); iter++)
+        {
+            int client_index = (*iter).first;
+
+            // In case we don't need to send data to the same client
+            if (client_index == player->index)
+                continue;
+            else
             {
-                bHitWall = true;
+                network::services::SendMessage((*iter).second, compressed_packet, packet_size);
             }
-            else // Ray is inbounds so test to see if the ray cell is a wall block
-                if (configs->map[(int)fTestX][(int)fTestY])
-                {
-                    // Ray has hit wall
-                    bHitWall = true;
+        }
+
+        delete[] compressed_packet;
+        delete[] packet.packet_data;
+
+    }
+
+    // Sends shouting information: new health and small movement (0.05) or return player to spawn
+    void ServerGame::SendShootingInfo(Player* shooter, Player* player_to_change)
+    {
+        if (player_to_change->health - configs_->shooting_damage <= 0) {
+            player_to_change->RandomPosition(*configs_); // respawn
+            player_to_change->health = configs_->health;
+            printf("Player %i killed player %i\n", shooter->index, player_to_change->index);
+        }
+        else {
+            player_to_change->health -= configs_->shooting_damage;
+
+            // Do some moving of the target
+            float direct_x = sinf(shooter->rotation);   // Unit vector for ray in shooting direction
+            float direct_y = cosf(shooter->rotation);
+
+            player_to_change->pos.x += direct_x * 0.05;
+            player_to_change->pos.y += direct_y * 0.05;
+        }
+
+        Packet packet;
+        packet.packet_type = kShooting;
+        packet.size_of_packet_data = sizeof(player_to_change->health) + sizeof(player_to_change->pos.x) +
+            sizeof(player_to_change->pos.y) + sizeof(player_to_change->rotation);
+
+        packet.packet_data = new char[packet.size_of_packet_data];
+        memcpy(packet.packet_data, &player_to_change->health, sizeof(player_to_change->health));
+        memcpy(packet.packet_data + sizeof(player_to_change->health), &player_to_change->pos.x, sizeof(player_to_change->pos.x));
+        memcpy(packet.packet_data + sizeof(player_to_change->health) + sizeof(player_to_change->pos.x),
+            &player_to_change->pos.y, sizeof(player_to_change->pos.y));
+        memcpy(packet.packet_data + sizeof(player_to_change->health) + sizeof(player_to_change->pos.x) + sizeof(player_to_change->pos.y),
+            &player_to_change->rotation, sizeof(player_to_change->rotation));
+
+        size_t packet_size = sizeof(packet.packet_type) + sizeof(packet.size_of_packet_data) + packet.size_of_packet_data;
+        char* packet_data = new char[packet_size];
+
+        packet.serialize(packet_data);
+
+        network::services::SendMessage(network_->sessions_[player_to_change->index], packet_data, packet_size);
+
+        delete[] packet.packet_data;
+        delete[] packet_data;
+    }
+    void ServerGame::PrintMap()
+    {
+        system("cls");
+        for (auto& line : real_map_) {
+            printf("\n");
+            for (auto& elem : line)
+                printf("%c", elem);
+        }
+    }
+
+    void ServerGame::SendConfigs(size_t client)
+    {
+        Packet packet;
+        packet.packet_type = kInitConnetion;
+        packet.size_of_packet_data = sizeof(Configs);
+
+        packet.packet_data = new char[packet.size_of_packet_data];
+        memcpy(packet.packet_data, configs_, sizeof(Configs));
+
+        size_t packet_size = sizeof(packet.packet_type) + sizeof(packet.size_of_packet_data) + packet.size_of_packet_data;
+        char* packet_data = new char[packet_size];
+
+        packet.serialize(packet_data);
+
+        network::services::SendMessage(network_->sessions_[client], packet_data, packet_size);
+
+        printf("Configuration file sent\n");
+
+        delete[] packet_data;
+        delete[] packet.packet_data;
+    }
+
+    void ServerGame::SendMap(size_t client)
+    {
+        // Convert map to single array
+        size_t map_size = configs_->map_width * configs_->map_height;
+        bool* map = new bool[map_size];
+        for (size_t i = 0; i < configs_->map_height; i++)
+            for (size_t j = 0; j < configs_->map_width; j++) {
+                map[i * configs_->map_width + j] = configs_->map[i][j];
+            }
+
+        Packet packet;
+        packet.packet_type = kMap;
+        packet.size_of_packet_data = map_size;
+
+        packet.packet_data = new char[packet.size_of_packet_data];
+        memcpy(packet.packet_data, map, map_size);
+
+        size_t packet_size = sizeof(packet.packet_type) + sizeof(packet.size_of_packet_data) + packet.size_of_packet_data;
+        char* packet_data = new char[packet_size];
+
+        packet.serialize(packet_data);
+
+        network::services::SendMessage(network_->sessions_[client], packet_data, packet_size);
+
+        printf("Map sent\n");
+
+        delete[] packet_data;
+        delete[] packet.packet_data;
+    }
+
+    void ServerGame::UpdateMap(Player* player)
+    {
+        // Replace player index in the map
+        for (size_t i = 0; i < real_map_.size(); i++)
+            for (size_t j = 0; j < real_map_[i].size(); j++)
+                if (real_map_[i][j] == player->index + '0') {
+                    real_map_[i][j] = configs_->map[i][j] ? '#' : ' ';
+                    real_map_[(int)player->pos.x][(int)player->pos.y] = player->index + '0';
+                    return;
                 }
-                else
-                    if (cross(shooter->x, shooter->y, fTestX, fTestY,
-                        target->leftFront_pos.x, target->leftFront_pos.y,
-                        target->rightFront_pos.x, target->rightFront_pos.y, fTestX, fTestY) ||
-                        cross(shooter->x, shooter->y, fTestX, fTestY,
-                            target->leftFront_pos.x, target->leftFront_pos.y,
-                            target->leftBack_pos.x, target->leftBack_pos.y, fTestX, fTestY) ||
-                        cross(shooter->x, shooter->y, fTestX, fTestY,
-                            target->leftBack_pos.x, target->leftBack_pos.y,
-                            target->rightBack_pos.x, target->rightBack_pos.y, fTestX, fTestY) ||
-                        cross(shooter->x, shooter->y, fTestX, fTestY,
-                            target->rightBack_pos.x, target->rightBack_pos.y,
-                            target->rightFront_pos.x, target->rightFront_pos.y, fTestX, fTestY))
-                    {
-                        bHitPlayer = true;
-                    }
-        }
+        // if not found - add player to map
+        real_map_[static_cast<int> (player->pos.x)][static_cast<int> (player->pos.y)] = player->index + '0';
     }
-    return bHitPlayer;
-}
 
-void ServerGame::receiveFromClients()
-{
-    Packet packet;
-
-    // go through all clients
-    std::map<unsigned int, SOCKET>::iterator iter;
-
-    for (iter = network->sessions.begin(); iter != network->sessions.end(); iter++)
+    bool ServerGame::CheckShouting(Player* shooter, Player* target)
     {
-        int data_length = network->receiveData(iter->first, network_data);
+        target->CaclulatePositions();
 
-        if (data_length <= 0)
+        bool hit_player = false;		// Set when ray hits player silhouette
+        bool hit_wall = false;			// Set when ray hits wall block
+
+        float direct_vector_x = sinf(shooter->rotation);   // Unit vector for ray in player space
+        float direct_vector_y = cosf(shooter->rotation);
+
+        // Crosing point
+        float cur_ray_pos_x = shooter->pos.x + direct_vector_x * configs_->max_shooting_range;
+        float cur_ray_pos_y = shooter->pos.y + direct_vector_y * configs_->max_shooting_range;
+
+        // Check whether the ray crosses the silhoete
+        if (cross(shooter->pos.x, shooter->pos.y, cur_ray_pos_x, cur_ray_pos_y,
+            target->left_front.x, target->left_front.y,
+            target->right_front.x, target->right_front.y, cur_ray_pos_x, cur_ray_pos_y) ||
+            cross(shooter->pos.x, shooter->pos.y, cur_ray_pos_x, cur_ray_pos_y,
+                target->left_front.x, target->left_front.y,
+                target->left_back.x, target->left_back.y, cur_ray_pos_x, cur_ray_pos_y) ||
+            cross(shooter->pos.x, shooter->pos.y, cur_ray_pos_x, cur_ray_pos_y,
+                target->left_back.x, target->left_back.y,
+                target->right_back.x, target->right_back.y, cur_ray_pos_x, cur_ray_pos_y) ||
+            cross(shooter->pos.x, shooter->pos.y, cur_ray_pos_x, cur_ray_pos_y,
+                target->right_back.x, target->right_back.y,
+                target->right_front.x, target->right_front.y, cur_ray_pos_x, cur_ray_pos_y))
         {
-            //no data recieved
-            continue;
-        }
+            float step_size = 0.1f;		             // Increment size for ray casting, decrease to increase resolution						
+            float distance_to_obstacle = 0.0f;       //	
 
-        int i = 0;
-        while (i < (unsigned int)data_length)
-        {
-            packet.deserialize(&(network_data[i]));
-            i += sizeof(packet.packet_type) + sizeof(packet.size_of_packet_data) + packet.size_of_packet_data;
-
-            switch (packet.packet_type) {
-
-                // Receiving location: x, y, rotation
-            case MOVEMENT:
+            // Incrementally cast ray from player, along ray angle, testing for 
+            // intersection with a block or a player
+            while (!hit_wall && !hit_player && distance_to_obstacle < configs_->max_shooting_range)
             {
-                // Update player location
-                size_t player_index = (*iter).first;
-                Player* player_to_change = players_locations[player_index];
-                memcpy(&player_to_change->x, packet.packet_data, sizeof(player_to_change->x));
-                memcpy(&player_to_change->y, packet.packet_data + sizeof(player_to_change->x), sizeof(player_to_change->y));
-                memcpy(&player_to_change->rotation, packet.packet_data + sizeof(player_to_change->x) + sizeof(player_to_change->y),
-                    sizeof(player_to_change->rotation));
+                distance_to_obstacle += step_size;
+                cur_ray_pos_x = shooter->pos.x + direct_vector_x * distance_to_obstacle;
+                cur_ray_pos_y = shooter->pos.y + direct_vector_y * distance_to_obstacle;
 
-                // Update the real map
-                updateMap(player_to_change);
-
-                // Resend information to other clients
-                sendMovementPackets(players_locations[player_index]);
-                delete[] packet.packet_data;
-                break;
+                // Test if ray is out of bounds
+                if (cur_ray_pos_x < 0 || cur_ray_pos_x >= configs_->map_width || cur_ray_pos_y < 0 || cur_ray_pos_y >= configs_->map_height)
+                {
+                    hit_wall = true;
+                }
+                else // Ray is inbounds so test to see if the ray cell is a wall block
+                    if (configs_->map[static_cast<int> (cur_ray_pos_x)][static_cast<int> (cur_ray_pos_y)])
+                    {
+                        // Ray has hit wall
+                        hit_wall = true;
+                    }
+                    else
+                        if (cross(shooter->pos.x, shooter->pos.y, cur_ray_pos_x, cur_ray_pos_y,
+                                target->left_front.x, target->left_front.y,
+                                target->right_front.x, target->right_front.y, cur_ray_pos_x, cur_ray_pos_y) ||
+                            cross(shooter->pos.x, shooter->pos.y, cur_ray_pos_x, cur_ray_pos_y,
+                                target->left_front.x, target->left_front.y,
+                                target->left_back.x, target->left_back.y, cur_ray_pos_x, cur_ray_pos_y) ||
+                            cross(shooter->pos.x, shooter->pos.y, cur_ray_pos_x, cur_ray_pos_y,
+                                target->left_back.x, target->left_back.y,
+                                target->right_back.x, target->right_back.y, cur_ray_pos_x, cur_ray_pos_y) ||
+                            cross(shooter->pos.x, shooter->pos.y, cur_ray_pos_x, cur_ray_pos_y,
+                                target->right_back.x, target->right_back.y,
+                                target->right_front.x, target->right_front.y, cur_ray_pos_x, cur_ray_pos_y))
+                        {
+                            hit_player = true;
+                        }
             }
-            case SHOOTING:
-            {
-                // Update player location
-                size_t player_index = (*iter).first;
+        }
+        return hit_player;
+    }
 
-                // Check is reloaded
-                std::chrono::system_clock::now();
-                std::chrono::duration<float> difference = std::chrono::system_clock::now() - last_firing_times[player_index];
-                if (difference.count() < configs->gunReloading_seconds)
+    void ServerGame::ReceiveFromClients()
+    {
+        Packet packet;
+
+        // Go through all clients
+        std::map<unsigned int, SOCKET>::iterator iter;
+
+        for (iter = network_->sessions_.begin(); iter != network_->sessions_.end(); iter++)
+        {
+            int data_length = network_->ReceiveData(iter->first, network_data_);
+
+            if (data_length <= 0)
+            {
+                // No data recieved
+                continue;
+            }
+
+            int i = 0;
+            while (i < static_cast<unsigned int> (data_length))
+            {
+                packet.deserialize(&(network_data_[i]));
+                i += sizeof(packet.packet_type) + sizeof(packet.size_of_packet_data) + packet.size_of_packet_data;
+
+                switch (packet.packet_type) {
+
+                    // Receiving location: x, y, rotation
+                case kMovement:
+                {
+                    // Update player location
+                    size_t player_index = (*iter).first;
+                    Player* player_to_change = players_locations_[player_index];
+                    memcpy(&player_to_change->pos.x, packet.packet_data, sizeof(player_to_change->pos.x));
+                    memcpy(&player_to_change->pos.y, packet.packet_data + sizeof(player_to_change->pos.x), sizeof(player_to_change->pos.y));
+                    memcpy(&player_to_change->rotation, packet.packet_data + sizeof(player_to_change->pos.x) + sizeof(player_to_change->pos.y),
+                        sizeof(player_to_change->rotation));
+
+                    // Update the real map
+                    UpdateMap(player_to_change);
+
+                    // Send information to other clients
+                    SendMovementPackets(players_locations_[player_index]);
+
+                    delete[] packet.packet_data;
                     break;
-                else
-                    last_firing_times[player_index] = std::chrono::system_clock::now();
-
-                Player* shooter = players_locations[player_index];
-                memcpy(&shooter->x, packet.packet_data, sizeof(shooter->x));
-                memcpy(&shooter->y, packet.packet_data + sizeof(shooter->x), sizeof(shooter->y));
-                memcpy(&shooter->rotation, packet.packet_data + sizeof(shooter->x) + sizeof(shooter->y),
-                    sizeof(shooter->rotation));
-
-                // Check all players for a hit
-                for (auto iter : players_locations)
-                {
-                    if (checkShouting(shooter, iter.second) && shooter->index != iter.first)
-                    {
-                        sendShootingInfo(shooter, iter.second);
-                        sendMovementPackets(iter.second);
-                        updateMap(iter.second);
-                    }
                 }
+                case kShooting:
+                {
+                    // Update player location
+                    size_t player_index = (*iter).first;
 
-                delete[] packet.packet_data;
-                break;
-            }
-            //
-            default:
+                    // Check is reloaded
+                    std::chrono::system_clock::now();
+                    std::chrono::duration<float> difference = std::chrono::system_clock::now() - last_firing_times_[player_index];
+                    if (difference.count() < configs_->gun_reloading)
+                        break;
+                    else
+                        last_firing_times_[player_index] = std::chrono::system_clock::now();
+
+                    Player* shooter = players_locations_[player_index];
+                    memcpy(&shooter->pos.x, packet.packet_data, sizeof(shooter->pos.x));
+                    memcpy(&shooter->pos.y, packet.packet_data + sizeof(shooter->pos.x), sizeof(shooter->pos.y));
+                    memcpy(&shooter->rotation, packet.packet_data + sizeof(shooter->pos.x) + sizeof(shooter->pos.y),
+                        sizeof(shooter->rotation));
+
+                    // Check all players for a hit
+                    for (auto iter : players_locations_)
+                    {
+                        if (CheckShouting(shooter, iter.second) && shooter->index != iter.first)
+                        {
+                            SendShootingInfo(shooter, iter.second);
+                            SendMovementPackets(iter.second);
+                            UpdateMap(iter.second);
+                        }
+                    }
+
+                    delete[] packet.packet_data;
+                    break;
+                }
                 //
-                //                printf("error in packet types\n");
-                //
-                break;
+                default:                
+                    printf("error in packet types\n");
+                    break;
+                }
             }
         }
     }
-}
 
-bool ServerGame::cross(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, float& x, float& y)
-{
-    float Ua, Ub, numerator_a, numerator_b, denominator;
+    bool ServerGame::cross(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, float& x, float& y)
+    {
+        float Ua, Ub, numerator_a, numerator_b, denominator;
 
-    denominator = (y4 - y3) * (x1 - x2) - (x4 - x3) * (y1 - y2);
+        denominator = (y4 - y3) * (x1 - x2) - (x4 - x3) * (y1 - y2);
 
-    if (denominator == 0) {
-        return false;
-    }
-    else {
-        numerator_a = (x4 - x2) * (y4 - y3) - (x4 - x3) * (y4 - y2);
-        numerator_b = (x1 - x2) * (y4 - y2) - (x4 - x2) * (y1 - y2);
-        Ua = numerator_a / denominator;
-        Ub = numerator_b / denominator;
-
-        if (Ua >= 0 && Ua <= 1 && Ub >= 0 && Ub <= 1) {
-            x = x1 + x2 * Ua;
-            y = y1 + y2 * Ua;
-            return true;
-        }
-        else
+        if (denominator == 0) {
             return false;
+        }
+        else {
+            numerator_a = (x4 - x2) * (y4 - y3) - (x4 - x3) * (y4 - y2);
+            numerator_b = (x1 - x2) * (y4 - y2) - (x4 - x2) * (y1 - y2);
+            Ua = numerator_a / denominator;
+            Ub = numerator_b / denominator;
+
+            if (Ua >= 0 && Ua <= 1 && Ub >= 0 && Ub <= 1) {
+                x = x1 + x2 * Ua;
+                y = y1 + y2 * Ua;
+                return true;
+            }
+            else
+                return false;
+        }
     }
 }
