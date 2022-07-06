@@ -164,7 +164,7 @@ namespace rendering
 		for (int x = 0; x < configs->screen_width; x++)
 		{
 			// For each column, calculate the projected ray angle into world space
-			float ray_angle = (player->rotation - player->kFOV / 2.0f) + ((float)x / (float)configs->screen_width) * player->kFOV;
+			float ray_angle = (player->rotation - player->kFOV / 2.0f) + (static_cast<float> (x) / static_cast<float> (configs->screen_width)) * player->kFOV;
 
 			// Find distance to wall
 			float step_size = 0.1f;		      // Increment size for ray casting, decrease to increase resolution						
@@ -194,7 +194,7 @@ namespace rendering
 				}
 				else
 					// Ray is inbounds so test to see if the ray cell is a wall block
-					if (map[(int)cur_ray_pos_x][(int)cur_ray_pos_y])
+					if (map[static_cast<int> (cur_ray_pos_x)][static_cast<int> (cur_ray_pos_y)])
 					{
 						// Ray has hit wall
 						hit_wall = true;
@@ -211,8 +211,8 @@ namespace rendering
 							for (int ty = 0; ty < 2; ty++)
 							{
 								// Angle of corner to eye
-								float vy = (int)cur_ray_pos_y + ty - player->pos.y;
-								float vx = (int)cur_ray_pos_x + tx - player->pos.x;
+								float vy = static_cast<int> (cur_ray_pos_y) + ty - player->pos.y;
+								float vx = static_cast<int> (cur_ray_pos_x) + tx - player->pos.x;
 								float d = sqrt(vx * vx + vy * vy);
 								float dot = (unit_ray_vector_x * vx / d) + (unit_ray_vector_y * vy / d);
 								p.push_back(std::make_pair(d, dot));
@@ -295,7 +295,7 @@ namespace rendering
 			}
 
 			// Calculate distance to ceiling and floor
-			int celling_dist = (float)(configs->screen_height / 2.0) - configs->screen_height / ((float)distance_to_obstacle);
+			int celling_dist = static_cast<float> (configs->screen_height / 2.0) - configs->screen_height / (static_cast<float> (distance_to_obstacle));
 			int floor_dist = configs->screen_height - celling_dist;
 
 			short pixel = ' ';
