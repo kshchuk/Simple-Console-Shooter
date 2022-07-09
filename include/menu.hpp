@@ -4,14 +4,15 @@
 
 #include <iostream>
 #include <chrono>
+#include <tuple>
 
-#include "include/network/client_game.h"
-#include "include/network/client_network.h"
-#include "include/info/configs.h"
-#include "include/info/player.h"
-#include "include/info/textures.h"
-#include "include/rendering.h"
-#include "include/menu.hpp"
+#include "../include/network/client_game.h"
+#include "../include/network/client_network.h"
+#include "../include/info/configs.h"
+#include "../include/info/player.h"
+#include "../include/info/textures.h"
+#include "../include/rendering.h"
+#include "../include/menu.hpp"
 
 
 void MainMenu();
@@ -47,7 +48,7 @@ void SetConsoleDimestions(int screen_width, int screen_height, int font_size)
 	SetConsoleScreenBufferInfoEx(hConsole, &consolesize);
 }
 
-void Pause(Configs* configs)
+void Pause(Configs& configs)
 {
 	system("cls");
 
@@ -76,21 +77,21 @@ void Pause(Configs* configs)
 		switch (pause_menu)
 		{
 		case kResume:
-			SetConsoleDimestions(configs->screen_width, configs->screen_height, configs->font_size);
+			SetConsoleDimestions(configs.screen_width, configs.screen_height, configs.font_size);
 			return;
 		case kResolutions:
 		{
 			system("cls");
 
 			std::cout << "\nConsole width:	";
-			std::cin >> configs->screen_width;
+			std::cin >> configs.screen_width;
 			std::cout << "\nConsole height:	";
-			std::cin >> configs->screen_height;
+			std::cin >> configs.screen_height;
 			std::cout << "\nFont size:		";
-			std::cin >> configs->font_size;
+			std::cin >> configs.font_size;
 
-			configs->SaveToFile();
-			SetConsoleDimestions(configs->screen_width, configs->screen_height, configs->font_size);
+			configs.SaveToFile();
+			SetConsoleDimestions(configs.screen_width, configs.screen_height, configs.font_size);
 			Pause(configs);
 			return;
 		}
@@ -109,22 +110,29 @@ void Pause(Configs* configs)
 
 void SoloMode()
 {
-	Textures* textures = new Textures();
-	Configs* configs = new Configs();
-	Player* player = new Player(*configs);
-	network::ClientGame* client = nullptr;
+	Textures textures;
+	Configs configs;
 
 	// Create Screen Buffer
-	wchar_t* screen = new wchar_t[configs->screen_width * configs->screen_height];
+	wchar_t* screen = new wchar_t[configs.screen_width * configs.screen_height];
 	HANDLE console = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
 	SetConsoleActiveScreenBuffer(console);
 	DWORD bytes_written = 0;
 
-	SetConsoleDimestions(configs->screen_width, configs->screen_height, configs->font_size);
+	SetConsoleDimestions(configs.screen_width, configs.screen_height, configs.font_size);
 
 	auto tp1 = std::chrono::system_clock::now();
 	auto tp2 = std::chrono::system_clock::now();
 	auto last_firing_time = std::chrono::system_clock::now();
+
+	std::chrono::duration<float> elapsed_time;
+	float felapsed_time;
+
+	Player* player = new Player(configs);
+	network::ClientGame* client = nullptr;
+
+	rendering::ConsoleInfo console_info(console, bytes_written, screen, tp1, tp2);
+	rendering::GamingInfo game_info(felapsed_time, configs, player, last_firing_time, client);
 
 	while (true)
 	{
@@ -137,24 +145,25 @@ void SoloMode()
 		// is non-deterministic
 
 		tp2 = std::chrono::system_clock::now();
-		std::chrono::duration<float> elapsed_time = tp2 - tp1;
+		elapsed_time = tp2 - tp1;
 		tp1 = tp2;
-		float felapsed_time = elapsed_time.count();
+		felapsed_time = elapsed_time.count();
 
-		rendering::CalculatePosition(configs->map, configs, felapsed_time, last_firing_time, client, player);
-		rendering::RenderFrame(configs, textures, configs->map, felapsed_time, last_firing_time, console, bytes_written, tp1, tp2, screen, player);
+		console_info = std::tie(console, bytes_written, screen, tp1, tp2);
+		game_info = std::tie(felapsed_time, configs, player, last_firing_time, client);
+
+		rendering::CalculatePosition(game_info);
+		rendering::RenderFrame(game_info, textures, console_info);
 	}
 }
 
 void ServerMode()
 {
-	Textures* textures = new Textures();
-	Configs* configs = new Configs();
-	Player* player = new Player(*configs);
+	Configs configs;
 
 	system("cls");
 
-	std::cout << "\n Server ip:port :  " << configs->server_ip << ":" << configs->default_port << std::endl <<
+	std::cout << "\n Server ip:port :  " << configs.server_ip << ":" << configs.default_port << std::endl <<
 		"\n (1) - Connect" <<
 		"\n (2) - Edit\n";
 
@@ -167,37 +176,46 @@ void ServerMode()
 		break;
 	case 2:
 	{
-		configs->set_server_ip();
-		configs->set_port();
-		configs->SaveToFile();
+		configs.set_server_ip();
+		configs.set_port();
+		configs.SaveToFile();
 	}
 	default:
 		break;
 	}
 
-	network::ClientGame* client = new network::ClientGame(configs);
+	network::ClientGame* client = new network::ClientGame(&configs);
 
 	while (!client->got_configs_ || !client->got_map_)
 		client->update();
 
+	Player* player = new Player(configs);
 	client->RegisterPlayer(player);
 
 	// Create Screen Buffer
-	wchar_t* screen = new wchar_t[configs->screen_width * configs->screen_height];
+	wchar_t* screen = new wchar_t[configs.screen_width * configs.screen_height];
 	HANDLE console = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
 	SetConsoleActiveScreenBuffer(console);
 	DWORD bytes_written = 0;
 
-	SetConsoleDimestions(configs->screen_width, configs->screen_height, configs->font_size);
+	SetConsoleDimestions(configs.screen_width, configs.screen_height, configs.font_size);
 
 	auto tp1 = std::chrono::system_clock::now();
 	auto tp2 = std::chrono::system_clock::now();
 	auto last_firing_time = std::chrono::system_clock::now();
 
+	std::chrono::duration<float> elapsed_time;
+	float felapsed_time;
+
+	Textures textures;
+
+	rendering::ConsoleInfo console_info(console, bytes_written, screen, tp1, tp2);
+	rendering::GamingInfo game_info(felapsed_time, configs, player, last_firing_time, client);
+
 	while (true)
 	{
 		client->update();
-
+		
 		// Handle pause button - ESC
 		if (GetAsyncKeyState(static_cast<unsigned short> (VK_ESCAPE)) & 0x8000)
 			Pause(configs);
@@ -207,12 +225,15 @@ void ServerMode()
 		// is non-deterministic
 
 		tp2 = std::chrono::system_clock::now();
-		std::chrono::duration<float> elapsed_time = tp2 - tp1;
+		elapsed_time = tp2 - tp1;
 		tp1 = tp2;
-		float felapsed_time = elapsed_time.count();
+		felapsed_time = elapsed_time.count();
 
-		rendering::CalculatePosition(configs->map, configs, felapsed_time, last_firing_time, client, player);
-		rendering::RenderFrame(configs, textures, configs->map, felapsed_time, last_firing_time, console, bytes_written, tp1, tp2, screen, player);
+		console_info = std::tie(console, bytes_written, screen, tp1, tp2);
+		game_info = std::tie(felapsed_time, configs, player, last_firing_time, client);
+
+		rendering::CalculatePosition(game_info);
+		rendering::RenderFrame(game_info, textures, console_info);
 	}
 }
 
@@ -221,7 +242,7 @@ void SettingsMode()
 	system("cls");
 	SetConsoleDimestions(70, 120, 5);
 
-	Configs* configs = new Configs();
+	Configs configs;
 
 	enum SettingsMenu
 	{
@@ -235,7 +256,7 @@ void SettingsMode()
 	{
 		system("cls");
 
-		configs->PrintAllSettings();
+		configs.PrintAllSettings();
 
 		std::cout << "\n\n (1) - Change settings" <<
 			"\n (2) - Print map" <<
@@ -261,19 +282,19 @@ void SettingsMode()
 			std::string new_value;
 			std::cout << "Enter new value:	";
 			std::cin >> new_value;
-			configs->ChangeConfig(change_variant, new_value);
-			configs->SaveToFile();
+			configs.ChangeConfig(change_variant, new_value);
+			configs.SaveToFile();
 			break;
 		}
 		case kMap:
 			system("cls");
-			configs->PrintMap();
+			configs.PrintMap();
 			system("PAUSE");
 			break;
 		case kEditMap:
 		{
 			system("cls");
-			configs->PrintMap();
+			configs.PrintMap();
 
 			int elems_to_change_num;
 			std::cout << "\nNumber of elements to change: ";
@@ -284,9 +305,9 @@ void SettingsMode()
 			{
 				int x, y, value;
 				std::cin >> x >> y >> value;
-				configs->map[x][y] = value;
+				configs.map[x][y] = value;
 			}
-			configs->SaveToFile();
+			configs.SaveToFile();
 			break;
 		}
 		case kReturn:
@@ -298,6 +319,7 @@ void SettingsMode()
 		}
 	}
 }
+
 
 void MainMenu()
 {

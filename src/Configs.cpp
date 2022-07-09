@@ -259,8 +259,9 @@ void Configs::PrintMap()
 	{
 		std::cout << std::endl;
 		for (auto elem : line)
-			std::cout << elem ? '█' : ' ';
+			std::cout << (elem ? "#" : " ");
 	}
+	std::cout << std::endl;
 }
 
 void Configs::ChangeConfig(ChangeVariant to_change, std::string new_value)

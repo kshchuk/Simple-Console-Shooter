@@ -4,6 +4,7 @@
 
 #include "configs.h"
 
+
 struct Player
 {
 	struct Point {

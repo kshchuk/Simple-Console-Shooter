@@ -30,7 +30,6 @@ namespace network
         char network_data_[kMaxPacketSize];
 
         ClientGame(Configs* configs);
-        ~ClientGame(void);
 
         // Receive packets
         void update();
