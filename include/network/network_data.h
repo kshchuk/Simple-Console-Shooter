@@ -1,6 +1,17 @@
+/*
+ *
+ * File: network_data.h
+ *
+ * Author: Yaroslav Kishchuk
+ * Contact: kshchuk@gmail.com
+ *
+ */
+
+
 #pragma once
 
 #include <string.h>
+
 
 namespace network
 {
@@ -8,12 +19,18 @@ namespace network
 
     enum PacketTypes
     {
+        // Initialization of connection.
+        // Send configs to the clients.
         kInitConnetion,
 
+        // Send map to the clients.
         kMap,
 
+        // Get current location from the client.
         kMovement,
 
+        // Get shooting direction and location.
+        // Send change of health and movement if got shooted.
         kShooting,
     };
 

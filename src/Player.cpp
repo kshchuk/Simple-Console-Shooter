@@ -1,3 +1,13 @@
+/*
+ *
+ * File: player.cpp
+ *
+ * Author: Yaroslav Kishchuk
+ * Contact: kshchuk@gmail.com
+ *
+ */
+
+
 #include "../include/info/player.h"
 
 
@@ -8,6 +18,7 @@ Player::Player(Configs configs)
 	pos.y = configs.playerY;
 	rotation = configs.playerA;
 	health = configs.health;
+
 	profile_width = configs.profile_width;
 	profile_height = configs.profile_height;
 	profile_depth = configs.profile_depth;
@@ -26,6 +37,9 @@ void Player::RandomPosition(Configs configs)
 	rotation = (mersenne() % 314) / 100;
 }
 
+// Calculates siluet's rectangel's corners positions with approprivate 
+// transfer formulas
+
 void Player::CaclulatePositions()
 {
 	left_front.x = profile_depth / 2;
@@ -41,6 +55,7 @@ void Player::CaclulatePositions()
 	right_back.y = -profile_width / 2;
 
 	// Turning
+
 	left_front.x = left_front.x * cosf(rotation) - left_front.y * sinf(rotation);
 	left_front.y = left_front.y * cosf(rotation) + left_front.x * sinf(rotation);
 

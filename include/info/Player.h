@@ -1,10 +1,19 @@
+/*
+ *
+ * file player.h
+ *
+ * author Yaroslav Kishchuk
+ * Contact: kshchuk@gmail.com
+ *
+ */
+
 #pragma once
 
 #include <random>
 
 #include "configs.h"
 
-
+ // Struct to keep player's information
 struct Player
 {
 	struct Point {
@@ -12,23 +21,26 @@ struct Player
 		float y;
 	};
 
+	Point pos;           // Player Position
+	float rotation;      // Player Rotation
 
-	Point pos;						// Player Position
-	float rotation;				// Player Rotation
+	const float kFOV;    // Field of View
+	const float kDepth;  // Maximum rendering distance
+	const float kSpeed;  // Walking Speed
 
-	const float kFOV;				// Field of View
-	const float kDepth;				// Maximum rendering distance
-	const float kSpeed;				// Walking Speed
+	// Size of other players' silhouettes
 
-	float profile_width;				// Profile width
-	float profile_depth;				// Profile depth
-	float profile_height;				// Profile height
+	float profile_width;
+	float profile_depth;
+	float profile_height;
 
-	// multiplayer
+	// Multiplayer info 
+
 	int index;
-	int health;						// min 1, max 100
+	int health;
 
-	// position of siluet (rectangle)
+	// Positions of silhouette (rectangle)
+
 	Point left_front;
 	Point right_front;
 	Point left_back;
@@ -38,6 +50,6 @@ struct Player
 
 	void RandomPosition(Configs configs);
 
-	// Calculate siluet's rectangel corners positions
+	// Calculates siluet's rectangel's corners positions
 	void CaclulatePositions();
 };

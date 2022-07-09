@@ -1,3 +1,14 @@
+/*
+ *
+ * File: server_game.cpp
+ *
+ * Author: Yaroslav Kishchuk
+ * Contact: kshchuk@gmail.com
+ *
+ */
+
+
+#include "../include/network/server_network.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -5,11 +16,8 @@
 #include <string>
 #include <iostream>
 
-#include "../include/network/server_network.h"
-
 #include <windows.h> 
 #include <wininet.h> 
-
 
 
 namespace network

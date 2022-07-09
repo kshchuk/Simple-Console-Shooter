@@ -1,10 +1,21 @@
-﻿#include <string>
+﻿/*
+ *
+ * File: configs.cpp
+ *
+ * Author: Yaroslav Kishchuk
+ * Contact: kshchuk@gmail.com
+ *
+ */
+
+#include "../include/info/configs.h"
+
+#include <string>
 #include <iostream>
 
 #include <windows.h>
 
-#include "../include/info/configs.h"
 #include "../include/info/json.hpp"
+
 
 Configs::Configs()
 {
@@ -97,18 +108,23 @@ Configs::Configs()
 		SaveToFile();
 	}
 }
-Configs::Configs(char* config_data)
-{
-	// Getting information
-	memcpy(this, config_data, sizeof(Configs) - sizeof(map)); // map is corrupted vector
 
-	// Getting map
-	int* imap = reinterpret_cast<int*> (config_data + sizeof(Configs));
+// Converts binary data into settings
+
+Configs::Configs(char* binary_data)
+{
+	// Gets information
+	memcpy(this, binary_data, sizeof(Configs) - sizeof(map)); // map is corrupted vector
+
+	// Gets map
+	int* imap = reinterpret_cast<int*> (binary_data + sizeof(Configs));
 
 	SaveToFile();
 }
 
-void Configs::GetMap(char* map_arr)
+// Converts binary data into map 
+
+void Configs::GetMap(char* binary_map)
 {
 	map.clear();
 	map.resize(map_height);
@@ -117,10 +133,12 @@ void Configs::GetMap(char* map_arr)
 
 	for (size_t i = 0; i < map_height; i++)
 		for (size_t j = 0; j < map_width; j++)
-			map[i][j] = static_cast<bool> (map_arr[i * map_width + j]);
+			map[i][j] = static_cast<bool> (binary_map[i * map_width + j]);
 
 	SaveToFile();
 }
+
+// Reads settings form .json file 'configs.json' using json library.
 
 bool Configs::ReadFromFile()
 {
@@ -168,6 +186,8 @@ bool Configs::ReadFromFile()
 		return false;
 	}
 }
+
+// Saves settings into .json file 'configs.json' using json library.
 
 void Configs::SaveToFile()
 {
@@ -220,16 +240,6 @@ void Configs::set_port()
 	std::cin >> default_port;
 }
 
-void Configs::set_server_ip(std::string new_ip)
-{
-	server_ip = new_ip;
-}
-
-void Configs::set_port(std::string new_port)
-{
-	default_port = new_port;
-}
-
 void Configs::PrintAllSettings()
 {
 	std::cout << "\n			Game settings:" <<
@@ -269,8 +279,9 @@ void Configs::PrintMap()
 	{
 		std::cout << std::endl;
 		for (auto elem : line)
-			std::cout << elem ? '█' : ' ';
+			std::cout << (elem ? "#" : " ");
 	}
+	std::cout << std::endl;
 }
 
 void Configs::ChangeConfig(ChangeVariant to_change, std::string new_value)

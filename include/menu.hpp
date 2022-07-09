@@ -1,8 +1,18 @@
+/*
+ *
+ * File: menu.hpp
+ *
+ * Author: Yaroslav Kishchuk
+ * Contact: kshchuk@gmail.com
+ *
+ */
+
+
 #include <iostream>
 #include <thread>
 
-#include "include/network/server_game.h"
-#include "include/info/configs.h"
+#include "network/server_game.h"
+#include "info/configs.h"
 
 
 void MainMenu();

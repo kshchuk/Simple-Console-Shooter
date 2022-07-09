@@ -1,3 +1,13 @@
+/*
+ *
+ * File: server_network.h
+ *
+ * Author: Yaroslav Kishchuk
+ * Contact: kshchuk@gmail.com
+ *
+ */
+
+
 #pragma once
 
 #include <winsock2.h>
@@ -12,6 +22,7 @@
 
 
 #pragma comment (lib, "Ws2_32.lib")
+
 
 namespace network
 {

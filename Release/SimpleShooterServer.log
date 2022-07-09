@@ -1,22 +1,23 @@
 ﻿  main.cpp
   configs.cpp
-  network_services.cpp
+C:\Users\lenovo\source\repos\SimpleShooterServer\src\configs.cpp(134,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\lenovo\source\repos\SimpleShooterServer\src\configs.cpp(135,24): warning C4018: '<': signed/unsigned mismatch
   player.cpp
-C:\Users\lenovo\source\repos\SimpleShooterServer\src\player.cpp(19,18): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
-C:\Users\lenovo\source\repos\SimpleShooterServer\src\player.cpp(20,18): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
-C:\Users\lenovo\source\repos\SimpleShooterServer\src\player.cpp(21,21): warning C4244: 'argument': conversion from 'float' to 'const unsigned int', possible loss of data
-C:\Users\lenovo\source\repos\SimpleShooterServer\src\player.cpp(21,24): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
-C:\Users\lenovo\source\repos\SimpleShooterServer\src\player.cpp(23,32): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+C:\Users\lenovo\source\repos\SimpleShooterServer\src\player.cpp(33,22): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+C:\Users\lenovo\source\repos\SimpleShooterServer\src\player.cpp(34,22): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+C:\Users\lenovo\source\repos\SimpleShooterServer\src\player.cpp(35,26): warning C4244: 'argument': conversion from 'float' to 'const unsigned int', possible loss of data
+C:\Users\lenovo\source\repos\SimpleShooterServer\src\player.cpp(35,33): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
+C:\Users\lenovo\source\repos\SimpleShooterServer\src\player.cpp(37,32): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
   server_game.cpp
-C:\Users\lenovo\source\repos\SimpleShooterServer\src\server_game.cpp(107,47): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-C:\Users\lenovo\source\repos\SimpleShooterServer\src\server_game.cpp(108,47): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-C:\Users\lenovo\source\repos\SimpleShooterServer\src\server_game.cpp(170,26): warning C4018: '<': signed/unsigned mismatch
-C:\Users\lenovo\source\repos\SimpleShooterServer\src\server_game.cpp(171,30): warning C4018: '<': signed/unsigned mismatch
-C:\Users\lenovo\source\repos\SimpleShooterServer\src\server_game.cpp(298,18): warning C4018: '<': signed/unsigned mismatch
-C:\Users\lenovo\source\repos\SimpleShooterServer\src\server_game.cpp(330,44): warning C4834: discarding return value of function with 'nodiscard' attribute
+C:\Users\lenovo\source\repos\SimpleShooterServer\src\server_game.cpp(120,55): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\lenovo\source\repos\SimpleShooterServer\src\server_game.cpp(121,55): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\lenovo\source\repos\SimpleShooterServer\src\server_game.cpp(184,30): warning C4018: '<': signed/unsigned mismatch
+C:\Users\lenovo\source\repos\SimpleShooterServer\src\server_game.cpp(185,34): warning C4018: '<': signed/unsigned mismatch
+C:\Users\lenovo\source\repos\SimpleShooterServer\src\server_game.cpp(312,22): warning C4018: '<': signed/unsigned mismatch
+C:\Users\lenovo\source\repos\SimpleShooterServer\src\server_game.cpp(345,48): warning C4834: discarding return value of function with 'nodiscard' attribute
   server_network.cpp
   Generating code
   Previous IPDB not found, fall back to full compilation.
-  All 2098 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  All 2219 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   SimpleShooterServer.vcxproj -> C:\Users\lenovo\source\repos\Simple Shooter\Release\SimpleShooterServer.exe

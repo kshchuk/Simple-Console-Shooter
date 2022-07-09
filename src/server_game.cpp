@@ -1,8 +1,18 @@
+/*
+ *
+ * File: server_game.cpp
+ *
+ * Author: Yaroslav Kishchuk
+ * Contact: kshchuk@gmail.com
+ *
+ */
+
+#include "../include/network/server_game.h"
 
 #include <iostream>
 #include <string>
 
-#include "../include/network/server_game.h"
+#include "../include/network/network_data.h"
 #include "../include/info/configs.h"
 #include "../include/info/player.h"
 
@@ -345,7 +355,7 @@ namespace network
                     memcpy(&shooter->rotation, packet.packet_data + sizeof(shooter->pos.x) + sizeof(shooter->pos.y),
                         sizeof(shooter->rotation));
 
-                    // Check all players for a hit
+                    // Checks all players for a hit
                     for (auto iter : players_locations_)
                     {
                         if (CheckShouting(shooter, iter.second) && shooter->index != iter.first)

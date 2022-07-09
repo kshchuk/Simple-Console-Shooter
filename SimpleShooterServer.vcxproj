@@ -159,7 +159,6 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\configs.cpp" />
-    <ClCompile Include="src\network_services.cpp" />
     <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\server_game.cpp" />
     <ClCompile Include="src\server_network.cpp" />

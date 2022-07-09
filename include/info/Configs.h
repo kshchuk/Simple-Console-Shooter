@@ -1,3 +1,12 @@
+/*
+ *
+ * File: configs.h
+ *
+ * Author: Yaroslav Kishchuk
+ * Contact: kshchuk@gmail.com
+ *
+ */
+
 #pragma once
 
 #include <fstream>
@@ -5,9 +14,11 @@
 #include <string>
 
 
-
+ // Struct to store and process game settings.
 const struct Configs
 {
+	// Enum class to help modify Configs' fields. Each element means what field
+	// we need to change.
 	enum class ChangeVariant
 	{
 		kScreenWidth = 1,
@@ -35,58 +46,66 @@ const struct Configs
 		kMap
 	};
 
-	int screen_width;			// Console Screen Size X (columns)
-	int screen_height;			// Console Screen Size Y (rows)
-	int font_size;				// Console Font size
+	// General settings
 
-	int map_width;				// World Dimensions (Width)
-	int map_height;				// World Dimensions (Height)
+	int screen_width;   // Console Screen Size X (columns)
+	int screen_height;  // Console Screen Size Y (rows)
+	int font_size;      // Console Font size
 
-	float playerX;				// Start Position X
-	float playerY;				// Start Position Y
-	float playerA;				// Start Rotation
-	float FOV;					// Field of View
-	float depth;				// Maximum rendering distance
-	float speed;				// Walking Speed
+	int map_width;      // World Dimensions (Width)
+	int map_height;     // World Dimensions (Height)
 
-	// Multiplayer
+	float playerX;      // Start Position X
+	float playerY;      // Start Position Y
+	float playerA;      // Start Rotation
+	float FOV;          // Field of View
+	float depth;        // Maximum rendering distance
+	float speed;        // Walking Speed
+
+	// Multiplayer settings
+
 	float max_shooting_range;
-	float gun_reloading;				// Reloading in seconds
+	float gun_reloading;
 	int shooting_damage;
 
-	float profile_width;				// Profile width
-	float profile_depth;				// Profile depth
-	float profile_height;				// Profile height
+	// Size of other players' silhouettes
 
-	int health;							// Player health 
+	float profile_width;
+	float profile_depth;
+	float profile_height;
+
+	int health;  // Player health 
 
 	std::string server_ip;
 	std::string default_port;
 
-	// Map of the world
+	// Map of the world for game
 	std::vector<std::vector<bool>> map;
 
-	// Reads configs from file or sets defaults
+	// Reads settings from file or sets defaults
 	Configs();
 
-	// Gets configs from binary
-	Configs(char* network_data);
+	// Transforms binary data into struct
+	Configs(char* binary_data);
 
+	// Gets ip and port from user throught iostream
 	void set_server_ip();
-	void set_server_ip(std::string new_ip);
 	void set_port();
-	void set_port(std::string new_port);
 
-	// Gets map from binary
-	void GetMap(char* map_data);
+	// Transforms binary data into map
+	void GetMap(char* binary_data);
 
+	// Reads information from file. Returns 'true' on success,
+	// 'false' - on fail. 
 	bool ReadFromFile();
+	// Writes information to file.
 	void SaveToFile();
 
 	void PrintAllSettings();
 
 	void PrintMap();
 
+	// Changes setting into new value.
 	void ChangeConfig(ChangeVariant to_change, std::string new_value);
 };
 
