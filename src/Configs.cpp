@@ -7,6 +7,7 @@
  *
  */
 
+
 #include "../include/info/configs.h"
 
 #include <string>
@@ -48,8 +49,8 @@ Configs::Configs()
 
 		health = 100;
 
-		server_ip = "127.0.0.1";
-		default_port = "6881";
+		strcpy_s(server_ip, "127.0.0.1");
+		strcpy_s(default_port, "6881");
 
 		map = {
 			{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
@@ -173,8 +174,10 @@ bool Configs::ReadFromFile()
 
 		health = j["health"];
 
-		server_ip = j["server_ip"];
-		default_port = j["default_port"];
+		std::string tmp = j["server_ip"];
+		strcpy_s(server_ip, tmp.c_str());
+		tmp = j["default_port"];
+		strcpy_s(default_port, tmp.c_str());
 
 		map = j["map"];
 
@@ -334,10 +337,10 @@ void Configs::ChangeConfig(ChangeVariant to_change, std::string new_value)
 		health = std::stoi(new_value);
 		break;
 	case Configs::ChangeVariant::kServerIp:
-		server_ip = new_value;
+		strcpy_s(server_ip, new_value.c_str());
 		break;
 	case Configs::ChangeVariant::kDefaultPort:
-		default_port = new_value;
+		strcpy_s(default_port, new_value.c_str());
 		break;
 	case Configs::ChangeVariant::kMap:
 		for (int i = 0; i < map_height; i++)

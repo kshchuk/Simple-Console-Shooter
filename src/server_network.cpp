@@ -22,7 +22,7 @@
 
 namespace network
 {
-    ServerNetwork::ServerNetwork(std::string port)
+    ServerNetwork::ServerNetwork(char* port)
     {
 
         // Create WSADATA object
@@ -51,7 +51,7 @@ namespace network
         hints.ai_protocol = IPPROTO_TCP;    // TCP connection!!!
         hints.ai_flags = AI_PASSIVE;
 
-        connect_result_ = getaddrinfo(NULL, port.c_str(), &hints, &result);
+        connect_result_ = getaddrinfo(NULL, port, &hints, &result);
 
         if (connect_result_ != 0) {
             printf("getaddrinfo failed with error: %d\n", connect_result_);
