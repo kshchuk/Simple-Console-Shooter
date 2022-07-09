@@ -17,7 +17,7 @@ namespace network
 {
     const int kMaxPacketSize = 1000000;
 
-    enum class PacketTypes
+    enum PacketTypes
     {
         // Initialization of connection.
         // Receive configs file from the server.

@@ -30,6 +30,7 @@ namespace network
     // Size of our buffer
     const int kDefaultBufflen = 512;
 
+    // Stores network info
     class ClientNetwork
     {
     public:

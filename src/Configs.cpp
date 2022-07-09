@@ -8,12 +8,13 @@
  */
 
 
+#include "../include/info/configs.h"
+
 #include <string>
 #include <iostream>
 
 #include <windows.h>
 
-#include "../include/info/configs.h"
 #include "../include/info/json.hpp"
 
 
