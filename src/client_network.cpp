@@ -13,7 +13,7 @@
 
 namespace network
 {
-    ClientNetwork::ClientNetwork(std::string ip, std::string port)
+    ClientNetwork::ClientNetwork(char* ip, char* port)
     {
 
         ip_ = ip;
@@ -46,7 +46,7 @@ namespace network
         hints.ai_protocol = IPPROTO_TCP;  //TCP connection!!!
 
         // Resolve server address and port
-        result_ = getaddrinfo(ip_.c_str(), port_.c_str(), &hints, &connect_info);
+        result_ = getaddrinfo(ip_, port_, &hints, &connect_info);
 
         if (result_ != 0)
         {

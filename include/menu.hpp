@@ -139,12 +139,11 @@ void ServerMode()
 	EditConnectionSettings(configs);
 
 	network::ClientGame* client = new network::ClientGame(&configs);
+	Player* player = new Player(configs);
+	client->RegisterPlayer(player);
 
 	while (!client->got_configs_ || !client->got_map_)
 		client->update();
-
-	Player* player = new Player(configs);
-	client->RegisterPlayer(player);
 
 	// Create Screen Buffer
 	wchar_t* screen = new wchar_t[configs.screen_width * configs.screen_height];

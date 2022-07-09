@@ -36,8 +36,8 @@ namespace network
     public:
 
         // IP/PORT to connect sockets through 
-        std::string ip_;
-        std::string port_;
+        char* ip_;
+        char* port_;
 
         // For error checking function calls in Winsock library
         int result_;
@@ -46,7 +46,7 @@ namespace network
         SOCKET connected_socket_;
 
         // ctor/dtor
-        ClientNetwork(std::string ip, std::string port);
+        ClientNetwork(char* ip, char* port);
         ~ClientNetwork(void);
 
         // Returns error number if fails

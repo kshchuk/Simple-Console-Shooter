@@ -76,8 +76,8 @@ const struct Configs
 
 	int health;  // Player health 
 
-	std::string server_ip;
-	std::string default_port;
+	char server_ip[20];
+	char default_port[10];
 
 	// Map of the world for game
 	std::vector<std::vector<bool>> map;
