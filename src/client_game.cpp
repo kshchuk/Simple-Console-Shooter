@@ -1,20 +1,33 @@
+/*
+ *
+ * File: client_game.cpp
+ *
+ * Author: Yaroslav Kishchuk
+ * Contact: kshchuk@gmail.com
+ *
+ */
+
+
 #include "../include/network/client_game.h"
 #include "../include/network/network_data.h"
 
+
 namespace network
 {
-
     ClientGame::ClientGame(Configs* configs)
     {
         configs_ = configs;
+
+        // Connect to the server
         network_ = new ClientNetwork(configs_->server_ip, configs_->default_port);
     }
 
-    // Receive packets
+
     void ClientGame::update()
     {
-        if (player_)
-            SendPlayerLocation();
+        SendPlayerLocation();
+
+        // Receiving and decoding
 
         Packet packet;
         int data_length = network_->ReceivePackets(network_data_);
@@ -104,8 +117,6 @@ namespace network
         delete[] compressed_packet;
     }
 
-
-    // Send location && direction of shooting
     void ClientGame::SendShootingInfo()
     {
         Packet packet;

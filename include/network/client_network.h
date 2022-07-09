@@ -1,6 +1,15 @@
+/*
+ *
+ * File: client_network.h
+ *
+ * Author: Yaroslav Kishchuk
+ * Contact: kshchuk@gmail.com
+ *
+ */
+
+
 #pragma once
 
-// Networking libraries
 #include <winsock2.h>
 #include <Windows.h>
 #include <ws2tcpip.h>
@@ -18,28 +27,29 @@
 
 namespace network
 {
-    // size of our buffer
+    // Size of our buffer
     const int kDefaultBufflen = 512;
 
     class ClientNetwork
     {
     public:
 
-        // ip/port to connect sockets through 
+        // IP/PORT to connect sockets through 
         std::string ip_;
         std::string port_;
 
-        // for error checking function calls in Winsock library
+        // For error checking function calls in Winsock library
         int result_;
 
-        // socket for client to connect to server
+        // Socket for client to connect to server
         SOCKET connected_socket_;
 
         // ctor/dtor
         ClientNetwork(std::string ip, std::string port);
         ~ClientNetwork(void);
 
-        int ReceivePackets(char*);
+        // Returns error number if fails
+        int ReceivePackets(char* recvbuf);
     };
 
 }

@@ -1,8 +1,20 @@
+/*
+ *
+ * File: textures.cpp
+ *
+ * Author: Yaroslav Kishchuk
+ * Contact: kshchuk@gmail.com
+ *
+ */
+
+
 #include "../include/info/textures.h"
 
 #include <string>
 #include <iostream>
 
+
+// Reads information from .txt files which are located in 'textures' folder.
 
 Textures::Textures()
 {

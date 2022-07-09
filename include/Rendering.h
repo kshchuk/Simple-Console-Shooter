@@ -1,3 +1,13 @@
+/*
+ *
+ * File: rendering.h
+ *
+ * Author: Yaroslav Kishchuk
+ * Contact: kshchuk@gmail.com
+ *
+ */
+
+
 #pragma once
 
 #include <vector>
@@ -35,7 +45,7 @@ namespace rendering
 	// Collision event
 	void Collision(const std::vector<std::vector<bool>>& map, Player* player, float elapsed_time, char key);
 
-	// Getting key commands
+	// Gets key commands
 	void CalculatePosition(GamingInfo& game_info);
 
 	void RenderFrame(GamingInfo& game_info, const Textures& textures, ConsoleInfo& console_info);

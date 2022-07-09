@@ -1,21 +1,36 @@
+/*
+ *
+ * File: network_data.h
+ *
+ * Author: Yaroslav Kishchuk
+ * Contact: kshchuk@gmail.com
+ *
+ */
+
+
 #pragma once
 
 #include <string.h>
 
+
 namespace network
 {
-
     const int kMaxPacketSize = 1000000;
 
-    enum PacketTypes
+    enum class PacketTypes
     {
-
+        // Initialization of connection.
+        // Receive configs file from the server.
         kInitConnetion,
 
+        // Get map from the server.
         kMap,
 
+        // Send current location
         kMovement,
 
+        // Send shooting direction and location.
+        // Receive change of health and movement if got shooted.
         kShooting,
     };
 

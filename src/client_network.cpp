@@ -1,8 +1,18 @@
-﻿#include "../include/network/client_network.h"
+﻿/*
+ *
+ * File: client_network.cpp
+ *
+ * Author: Yaroslav Kishchuk
+ * Contact: kshchuk@gmail.com
+ *
+ */
+
+
+#include "../include/network/client_network.h"
+
 
 namespace network
 {
-
     ClientNetwork::ClientNetwork(std::string ip, std::string port)
     {
 
@@ -74,12 +84,12 @@ namespace network
 
 
 
-        // no longer need address info for server
+        //No longer need address info for server
         freeaddrinfo(connect_info);
 
 
 
-        // if connection failed
+        // If connection failed
         if (connected_socket_ == INVALID_SOCKET)
         {
             printf("Unable to connect to server!\n");

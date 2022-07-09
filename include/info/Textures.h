@@ -1,7 +1,18 @@
+/*
+ *
+ * File: textures.h
+ *
+ * Author: Yaroslav Kishchuk
+ * Contact: kshchuk@gmail.com
+ *
+ */
+
+
 #pragma once
 
 #include <fstream>
 
+// Is using for storing textures information
 const struct Textures
 {
 public:
@@ -21,11 +32,12 @@ public:
 	size_t big_explosion_file_width = 201,
 		big_explosion_file_height = 80;
 
-	// TODO:
+	// TODO: Make wall textures
 	char** wall;
 	size_t wall_file_width,
 		wall_file_height;
 
+	// Reads information from .txt files.
 	Textures();
 };
 

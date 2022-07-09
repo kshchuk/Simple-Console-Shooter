@@ -175,7 +175,6 @@
     <ClCompile Include="src\client_game.cpp" />
     <ClCompile Include="src\client_network.cpp" />
     <ClCompile Include="src\configs.cpp" />
-    <ClCompile Include="src\network_services.cpp" />
     <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\rendering.cpp" />
     <ClCompile Include="src\textures.cpp" />

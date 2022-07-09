@@ -1,3 +1,13 @@
+/*
+ *
+ * File: configs.cpp
+ *
+ * Author: Yaroslav Kishchuk
+ * Contact: kshchuk@gmail.com
+ *
+ */
+
+
 #include <string>
 #include <iostream>
 
@@ -5,6 +15,7 @@
 
 #include "../include/info/configs.h"
 #include "../include/info/json.hpp"
+
 
 Configs::Configs()
 {
@@ -97,18 +108,23 @@ Configs::Configs()
 		SaveToFile();
 	}
 }
-Configs::Configs(char* config_data)
-{
-	// Getting information
-	memcpy(this, config_data, sizeof(Configs) - sizeof(map)); // map is corrupted vector
 
-	// Getting map
-	int* imap = reinterpret_cast<int*> (config_data + sizeof(Configs));
+// Converts binary data into settings
+
+Configs::Configs(char* binary_data)
+{
+	// Gets information
+	memcpy(this, binary_data, sizeof(Configs) - sizeof(map)); // map is corrupted vector
+
+	// Gets map
+	int* imap = reinterpret_cast<int*> (binary_data + sizeof(Configs));
 
 	SaveToFile();
 }
 
-void Configs::GetMap(char* map_arr)
+// Converts binary data into map 
+
+void Configs::GetMap(char* binary_map)
 {
 	map.clear();
 	map.resize(map_height);
@@ -117,10 +133,12 @@ void Configs::GetMap(char* map_arr)
 
 	for (size_t i = 0; i < map_height; i++)
 		for (size_t j = 0; j < map_width; j++)
-			map[i][j] = static_cast<bool> (map_arr[i * map_width + j]);
+			map[i][j] = static_cast<bool> (binary_map[i * map_width + j]);
 
 	SaveToFile();
 }
+
+// Reads settings form .json file 'configs.json' using json library.
 
 bool Configs::ReadFromFile()
 {
@@ -168,6 +186,8 @@ bool Configs::ReadFromFile()
 		return false;
 	}
 }
+
+// Saves settings into .json file 'configs.json' using json library.
 
 void Configs::SaveToFile()
 {

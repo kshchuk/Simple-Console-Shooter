@@ -1,7 +1,19 @@
+/*
+ *
+ * File: rendering.cpp
+ *
+ * Author: Yaroslav Kishchuk
+ * Contact: kshchuk@gmail.com
+ *
+ */
+
+
 #include "../include/rendering.h"
+
 
 namespace rendering
 {
+	// Calculates the contact angle and moves player parallel to the obstacle.
 
 	void Collision(const std::vector<std::vector<bool>>& map, Player* player, float elapsed_time, char key)
 	{

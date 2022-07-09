@@ -1,3 +1,13 @@
+/*
+ *
+ * File: menu.hpp
+ *
+ * Author: Yaroslav Kishchuk
+ * Contact: kshchuk@gmail.com
+ *
+ */
+
+
 #pragma once
 
 #include <stdlib.h>
@@ -16,88 +26,51 @@
 
 
 void MainMenu();
+void SetConsoleDimestions(int, int, int);
+void Pause(Configs&);
+void SoloMode();
+void ServerMode();
+void SettingsMode();
+void EditConnectionSettings(Configs&);
 
-void SetConsoleDimestions(int screen_width, int screen_height, int font_size)
-{
-	CONSOLE_SCREEN_BUFFER_INFOEX consolesize;
 
-	consolesize.cbSize = sizeof(consolesize);
-
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-
-	GetConsoleScreenBufferInfoEx(hConsole, &consolesize);
-
-	COORD c;
-	c.X = screen_width;
-	c.Y = screen_height;
-	consolesize.dwSize = c;
-
-	consolesize.srWindow.Left = 0;
-	consolesize.srWindow.Right = screen_width;
-	consolesize.srWindow.Top = 0;
-	consolesize.srWindow.Bottom = screen_height;
-
-	static CONSOLE_FONT_INFOEX  fontex;
-	fontex.cbSize = sizeof(CONSOLE_FONT_INFOEX);
-	GetCurrentConsoleFontEx(hConsole, 0, &fontex);
-	//fontex.FontWeight = 700;
-	fontex.dwFontSize.X = font_size;
-	fontex.dwFontSize.Y = 0;
-	SetCurrentConsoleFontEx(hConsole, NULL, &fontex);
-
-	SetConsoleScreenBufferInfoEx(hConsole, &consolesize);
-}
-
-void Pause(Configs& configs)
+void MainMenu()
 {
 	system("cls");
 
-	SetConsoleDimestions(120, 80, 16);
+	SetConsoleDimestions(60, 25, 16);
 
-	std::cout << "\n			PAUSE\n" <<
-		"\n	(1) - Resume game" <<
-		"\n (2) - Change resolutions" <<
-		"\n	(3) - Return to Main menu" <<
-		"\n	(0) - Exit\n";
+	std::cout << "\n\n		Main menu\n" <<
+		"\n	(1) - Solo game (explore map)" <<
+		"\n	(2) - Server game (connect to the server)"
+		"\n	(3) - Settings" <<
+	  "\n\n	(0) - Exit\n";
 
-	enum PauseMenu
+	enum MainMenu
 	{
-		kResume = 1,
-		kResolutions,
-		kReturn, 
+		kSolo = 1,
+		kServer,
+		kSettings,
 		kExit = 0
 	};
 
-	int ans;
-	std::cin >> ans;
-	PauseMenu pause_menu = static_cast<PauseMenu> (ans);
-
 	while (true)
 	{
-		switch (pause_menu)
-		{
-		case kResume:
-			SetConsoleDimestions(configs.screen_width, configs.screen_height, configs.font_size);
-			return;
-		case kResolutions:
-		{
-			system("cls");
+		int ans;
+		std::cin >> ans;
+		MainMenu menu = static_cast<MainMenu> (ans);
 
-			std::cout << "\nConsole width:	";
-			std::cin >> configs.screen_width;
-			std::cout << "\nConsole height:	";
-			std::cin >> configs.screen_height;
-			std::cout << "\nFont size:		";
-			std::cin >> configs.font_size;
-
-			configs.SaveToFile();
-			SetConsoleDimestions(configs.screen_width, configs.screen_height, configs.font_size);
-			Pause(configs);
-			return;
-		}
-		case kReturn:
-			MainMenu();
-			return;
+		switch (menu)
+		{
+		case kSolo:
+			SoloMode();
+			break;
+		case kServer:
+			ServerMode();
+			break;
+		case kSettings:
+			SettingsMode();
+			break;
 		case kExit:
 			exit(0);
 			break;
@@ -163,26 +136,7 @@ void ServerMode()
 
 	system("cls");
 
-	std::cout << "\n Server ip:port :  " << configs.server_ip << ":" << configs.default_port << std::endl <<
-		"\n (1) - Connect" <<
-		"\n (2) - Edit\n";
-
-	int ans;
-	std::cin >> ans;
-
-	switch (ans)
-	{
-	case 1:
-		break;
-	case 2:
-	{
-		configs.set_server_ip();
-		configs.set_port();
-		configs.SaveToFile();
-	}
-	default:
-		break;
-	}
+	EditConnectionSettings(configs);
 
 	network::ClientGame* client = new network::ClientGame(&configs);
 
@@ -215,7 +169,7 @@ void ServerMode()
 	while (true)
 	{
 		client->update();
-		
+
 		// Handle pause button - ESC
 		if (GetAsyncKeyState(static_cast<unsigned short> (VK_ESCAPE)) & 0x8000)
 			Pause(configs);
@@ -320,44 +274,56 @@ void SettingsMode()
 	}
 }
 
-
-void MainMenu()
+void Pause(Configs& configs)
 {
 	system("cls");
 
-	SetConsoleDimestions(60, 25, 16);
+	SetConsoleDimestions(120, 80, 16);
 
-	std::cout << "\n\n		Main menu\n" <<
-		"\n	(1) - Solo game (explore map)" <<
-		"\n	(2) - Server game (connect to the server)"
-		"\n	(3) - Settings" <<
-	  "\n\n	(0) - Exit\n";
+	std::cout << "\n			PAUSE\n" <<
+		"\n	(1) - Resume game" <<
+		"\n (2) - Change resolutions" <<
+		"\n	(3) - Return to Main menu" <<
+		"\n	(0) - Exit\n";
 
-	enum MainMenu
+	enum PauseMenu
 	{
-		kSolo = 1,
-		kServer,
-		kSettings,
+		kResume = 1,
+		kResolutions,
+		kReturn,
 		kExit = 0
 	};
 
+	int ans;
+	std::cin >> ans;
+	PauseMenu pause_menu = static_cast<PauseMenu> (ans);
+
 	while (true)
 	{
-		int ans;
-		std::cin >> ans;
-		MainMenu menu = static_cast<MainMenu> (ans);
-
-		switch (menu)
+		switch (pause_menu)
 		{
-		case kSolo:
-			SoloMode();
-			break;
-		case kServer:
-			ServerMode();
-			break;
-		case kSettings:
-			SettingsMode();
-			break;
+		case kResume:
+			SetConsoleDimestions(configs.screen_width, configs.screen_height, configs.font_size);
+			return;
+		case kResolutions:
+		{
+			system("cls");
+
+			std::cout << "\nConsole width:	";
+			std::cin >> configs.screen_width;
+			std::cout << "\nConsole height:	";
+			std::cin >> configs.screen_height;
+			std::cout << "\nFont size:		";
+			std::cin >> configs.font_size;
+
+			configs.SaveToFile();
+			SetConsoleDimestions(configs.screen_width, configs.screen_height, configs.font_size);
+			Pause(configs);
+			return;
+		}
+		case kReturn:
+			MainMenu();
+			return;
 		case kExit:
 			exit(0);
 			break;
@@ -365,5 +331,61 @@ void MainMenu()
 			continue;
 			break;
 		}
+	}
+}
+
+void SetConsoleDimestions(int screen_width, int screen_height, int font_size)
+{
+	CONSOLE_SCREEN_BUFFER_INFOEX consolesize;
+
+	consolesize.cbSize = sizeof(consolesize);
+
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	GetConsoleScreenBufferInfoEx(hConsole, &consolesize);
+
+	COORD c;
+	c.X = screen_width;
+	c.Y = screen_height;
+	consolesize.dwSize = c;
+
+	consolesize.srWindow.Left = 0;
+	consolesize.srWindow.Right = screen_width;
+	consolesize.srWindow.Top = 0;
+	consolesize.srWindow.Bottom = screen_height;
+
+	static CONSOLE_FONT_INFOEX  fontex;
+	fontex.cbSize = sizeof(CONSOLE_FONT_INFOEX);
+	GetCurrentConsoleFontEx(hConsole, 0, &fontex);
+	//fontex.FontWeight = 700;
+	fontex.dwFontSize.X = font_size;
+	fontex.dwFontSize.Y = 0;
+	SetCurrentConsoleFontEx(hConsole, NULL, &fontex);
+
+	SetConsoleScreenBufferInfoEx(hConsole, &consolesize);
+}
+
+
+void EditConnectionSettings(Configs& configs)
+{
+	std::cout << "\n Server ip:port :  " << configs.server_ip << ":" << configs.default_port << std::endl <<
+		"\n (1) - Connect" <<
+		"\n (2) - Edit\n";
+
+	int ans;
+	std::cin >> ans;
+
+	switch (ans)
+	{
+	case 1:
+		break;
+	case 2:
+	{
+		configs.set_server_ip();
+		configs.set_port();
+		configs.SaveToFile();
+	}
+	default:
+		break;
 	}
 }
