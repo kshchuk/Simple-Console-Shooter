@@ -11,28 +11,28 @@
 #include "../include/info/player.h"
 
 
-Player::Player(Configs configs)
-	: kFOV(configs.FOV), kDepth(configs.depth), kSpeed(configs.speed)
+Player::Player()
+	: kFOV(Configs::FOV), kDepth(Configs::depth), kSpeed(Configs::speed)
 {
-	pos.x = configs.playerX;
-	pos.y = configs.playerY;
-	rotation = configs.playerA;
-	health = configs.health;
+	pos.x = Configs::playerX;
+	pos.y = Configs::playerY;
+	rotation = Configs::playerA;
+	health = Configs::health;
 
-	profile_width = configs.profile_width;
-	profile_height = configs.profile_height;
-	profile_depth = configs.profile_depth;
+	profile_width = Configs::profile_width;
+	profile_height = Configs::profile_height;
+	profile_depth = Configs::profile_depth;
 }
 
-void Player::RandomPosition(Configs configs)
+void Player::RandomPosition()
 {
 	std::random_device rd;
 	std::mt19937 mersenne(rd());
 
 	do {
-		pos.x = mersenne() % configs.map_width;
-		pos.y = mersenne() % configs.map_height;
-	} while (configs.map[pos.x][pos.y]);
+		pos.x = mersenne() % Configs::map_width;
+		pos.y = mersenne() % Configs::map_height;
+	} while (Configs::map[pos.x][pos.y]);
 
 	rotation = (mersenne() % 314) / 100;
 }

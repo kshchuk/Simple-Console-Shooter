@@ -14,20 +14,26 @@
 #include <iostream>
 
 
-// Reads information from .txt files which are located in 'textures' folder.
+// Static members initialization
 
+std::vector<std::vector<char>> Textures::gun_;
+std::vector<std::vector<char>> Textures::small_explosion_;
+std::vector<std::vector<char>> Textures::middle_explosion_;
+std::vector<std::vector<char>> Textures::big_explosion_;
+
+// Reads information from .txt files which are located in 'textures' folder.
 Textures::Textures()
 {
 	std::ifstream gunf("textures/gun.txt");
 
 	if (gunf)
 	{
-		gun = new char* [gun_file_height];
-		for (size_t i = 0; i < gun_file_height; i++)
+		gun_.resize(kGunHeight);
+		for (size_t i = 0; i < kGunHeight; i++)
 		{
-			gun[i] = new char[gun_file_width];
-			for (int j = 0; j < gun_file_width; j++) {
-				gun[i][j] = gunf.get();
+			gun_[i].resize(kGunWidth);
+			for (size_t j = 0; j < kGunWidth; j++) {
+				gun_[i][j] = gunf.get();
 			}
 		}
 		gunf.close();
@@ -42,13 +48,13 @@ Textures::Textures()
 
 	if (s_exp)
 	{
-		small_explosion = new char* [small_explosion_file_height];
-		for (size_t i = 0; i < small_explosion_file_height; i++)
+		small_explosion_.resize(kSmallExplosionHeight);
+		for (size_t i = 0; i < kSmallExplosionHeight; i++)
 		{
 			//std::cout << '\n';
-			small_explosion[i] = new char[small_explosion_file_width];
-			for (int j = 0; j < small_explosion_file_width; j++) {
-				small_explosion[i][j] = s_exp.get();
+			small_explosion_[i].resize(kSmallExplosionWidth);
+			for (size_t j = 0; j < kSmallExplosionWidth; j++) {
+				small_explosion_[i][j] = s_exp.get();
 				//std::cout << small_explosion[i][j];
 			}
 		}
@@ -65,13 +71,13 @@ Textures::Textures()
 
 	if (m_exp)
 	{
-		middle_explosion = new char* [middle_explosion_file_height];
-		for (size_t i = 0; i < middle_explosion_file_height; i++)
+		middle_explosion_.resize(kMiddleExplosionHeight);
+		for (size_t i = 0; i < kMiddleExplosionHeight; i++)
 		{
 			//std::cout << '\n';
-			middle_explosion[i] = new char[middle_explosion_file_width];
-			for (int j = 0; j < middle_explosion_file_width; j++) {
-				middle_explosion[i][j] = m_exp.get();
+			middle_explosion_[i].resize(kMiddleExplosionWidth);
+			for (size_t j = 0; j < kMiddleExplosionWidth; j++) {
+				middle_explosion_[i][j] = m_exp.get();
 				//std::cout << middle_explosion[i][j];
 
 			}
@@ -88,13 +94,13 @@ Textures::Textures()
 
 	if (b_exp)
 	{
-		big_explosion = new char* [big_explosion_file_height];
-		for (size_t i = 0; i < big_explosion_file_height; i++)
+		big_explosion_.resize(kBigExplosionHeight);
+		for (size_t i = 0; i < kBigExplosionHeight; i++)
 		{
 			//std::cout << '\n';
-			big_explosion[i] = new char[big_explosion_file_width];
-			for (int j = 0; j < big_explosion_file_width; j++) {
-				big_explosion[i][j] = b_exp.get();
+			big_explosion_[i].resize(kBigExplosionWidth);
+			for (size_t j = 0; j < kBigExplosionWidth; j++) {
+				big_explosion_[i][j] = b_exp.get();
 				//std::cout << big_explosion[i][j];
 			}
 		}

@@ -27,11 +27,11 @@
 
 void MainMenu();
 void SetConsoleDimestions(int, int, int);
-void Pause(Configs&);
+void Pause();
 void SoloMode();
 void ServerMode();
 void SettingsMode();
-void EditConnectionSettings(Configs&);
+void EditConnectionSettings();
 
 
 void MainMenu()
@@ -83,16 +83,19 @@ void MainMenu()
 
 void SoloMode()
 {
-	Textures textures;
-	Configs configs;
+	// Read from files into memory
+
+	Textures _;
+	Configs _c;
+
 
 	// Create Screen Buffer
-	wchar_t* screen = new wchar_t[configs.screen_width * configs.screen_height];
+	wchar_t* screen = new wchar_t[Configs::screen_width * Configs::screen_height];
 	HANDLE console = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
 	SetConsoleActiveScreenBuffer(console);
 	DWORD bytes_written = 0;
 
-	SetConsoleDimestions(configs.screen_width, configs.screen_height, configs.font_size);
+	SetConsoleDimestions(Configs::screen_width, Configs::screen_height, Configs::font_size);
 
 	auto tp1 = std::chrono::system_clock::now();
 	auto tp2 = std::chrono::system_clock::now();
@@ -101,17 +104,17 @@ void SoloMode()
 	std::chrono::duration<float> elapsed_time;
 	float felapsed_time;
 
-	Player* player = new Player(configs);
+	Player* player = new Player();
 	network::ClientGame* client = nullptr;
 
 	rendering::ConsoleInfo console_info(console, bytes_written, screen, tp1, tp2);
-	rendering::GamingInfo game_info(felapsed_time, configs, player, last_firing_time, client);
+	rendering::GamingInfo game_info(felapsed_time, player, last_firing_time, client);
 
 	while (true)
 	{
 		// Handle pause button - ESC
 		if (GetAsyncKeyState(static_cast<unsigned short> (VK_ESCAPE)) & 0x8000)
-			Pause(configs);
+			Pause();
 
 		// We'll need time differential per frame to calculate modification
 		// to movement speeds, to ensure consistant movement, as ray-tracing
@@ -123,35 +126,38 @@ void SoloMode()
 		felapsed_time = elapsed_time.count();
 
 		console_info = std::tie(console, bytes_written, screen, tp1, tp2);
-		game_info = std::tie(felapsed_time, configs, player, last_firing_time, client);
+		game_info = std::tie(felapsed_time, player, last_firing_time, client);
 
 		rendering::CalculatePosition(game_info);
-		rendering::RenderFrame(game_info, textures, console_info);
+		rendering::RenderFrame(game_info, console_info);
 	}
 }
 
 void ServerMode()
 {
-	Configs configs;
+	// Read from files into memory
+
+	Textures _;
+	Configs _c;
 
 	system("cls");
 
-	EditConnectionSettings(configs);
+	EditConnectionSettings();
 
-	network::ClientGame* client = new network::ClientGame(&configs);
-	Player* player = new Player(configs);
+	network::ClientGame* client = new network::ClientGame();
+	Player* player = new Player();
 	client->RegisterPlayer(player);
 
 	while (!client->got_configs_ || !client->got_map_)
 		client->update();
 
 	// Create Screen Buffer
-	wchar_t* screen = new wchar_t[configs.screen_width * configs.screen_height];
+	wchar_t* screen = new wchar_t[Configs::screen_width * Configs::screen_height];
 	HANDLE console = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
 	SetConsoleActiveScreenBuffer(console);
 	DWORD bytes_written = 0;
 
-	SetConsoleDimestions(configs.screen_width, configs.screen_height, configs.font_size);
+	SetConsoleDimestions(Configs::screen_width, Configs::screen_height, Configs::font_size);
 
 	auto tp1 = std::chrono::system_clock::now();
 	auto tp2 = std::chrono::system_clock::now();
@@ -160,10 +166,8 @@ void ServerMode()
 	std::chrono::duration<float> elapsed_time;
 	float felapsed_time;
 
-	Textures textures;
-
 	rendering::ConsoleInfo console_info(console, bytes_written, screen, tp1, tp2);
-	rendering::GamingInfo game_info(felapsed_time, configs, player, last_firing_time, client);
+	rendering::GamingInfo game_info(felapsed_time, player, last_firing_time, client);
 
 	while (true)
 	{
@@ -171,7 +175,7 @@ void ServerMode()
 
 		// Handle pause button - ESC
 		if (GetAsyncKeyState(static_cast<unsigned short> (VK_ESCAPE)) & 0x8000)
-			Pause(configs);
+			Pause();
 
 		// We'll need time differential per frame to calculate modification
 		// to movement speeds, to ensure consistant movement, as ray-tracing
@@ -183,10 +187,10 @@ void ServerMode()
 		felapsed_time = elapsed_time.count();
 
 		console_info = std::tie(console, bytes_written, screen, tp1, tp2);
-		game_info = std::tie(felapsed_time, configs, player, last_firing_time, client);
+		game_info = std::tie(felapsed_time, player, last_firing_time, client);
 
 		rendering::CalculatePosition(game_info);
-		rendering::RenderFrame(game_info, textures, console_info);
+		rendering::RenderFrame(game_info, console_info);
 	}
 }
 
@@ -195,7 +199,7 @@ void SettingsMode()
 	system("cls");
 	SetConsoleDimestions(70, 120, 5);
 
-	Configs configs;
+	Configs _;
 
 	enum SettingsMenu
 	{
@@ -209,7 +213,7 @@ void SettingsMode()
 	{
 		system("cls");
 
-		configs.PrintAllSettings();
+		Configs::PrintAllSettings();
 
 		std::cout << "\n\n (1) - Change settings" <<
 			"\n (2) - Print map" <<
@@ -235,32 +239,41 @@ void SettingsMode()
 			std::string new_value;
 			std::cout << "Enter new value:	";
 			std::cin >> new_value;
-			configs.ChangeConfig(change_variant, new_value);
-			configs.SaveToFile();
+			Configs::ChangeConfig(change_variant, new_value);
+			Configs::SaveToFile();
 			break;
 		}
 		case kMap:
 			system("cls");
-			configs.PrintMap();
+			Configs::PrintMap();
 			system("PAUSE");
 			break;
 		case kEditMap:
 		{
 			system("cls");
-			configs.PrintMap();
+			Configs::PrintMap();
 
 			int elems_to_change_num;
 			std::cout << "\nNumber of elements to change: ";
 			std::cin >> elems_to_change_num;
 
 			std::cout << "\nEnter the coordinates and value, where 1 - wall, 0 - space (example ' 0 23 1 ', ' 3 1 0 ' ";
+			std::vector<std::vector<bool>> map = Configs::map;
+
 			for (int i = 0; i < elems_to_change_num; i++)
 			{
 				int x, y, value;
 				std::cin >> x >> y >> value;
-				configs.map[x][y] = value;
+				map[x][y] = value;
 			}
-			configs.SaveToFile();
+
+			std::string smap;
+			for (auto line : map)
+				for (auto elem : line)
+					smap += '1' ? elem == true : '0';
+
+			Configs::ChangeConfig(Configs::ChangeVariant::kMap, smap);
+			Configs::SaveToFile();
 			break;
 		}
 		case kReturn:
@@ -273,11 +286,13 @@ void SettingsMode()
 	}
 }
 
-void Pause(Configs& configs)
+void Pause()
 {
 	system("cls");
 
 	SetConsoleDimestions(120, 80, 16);
+
+	system("cls");
 
 	std::cout << "\n			PAUSE\n" <<
 		"\n	(1) - Resume game" <<
@@ -302,22 +317,27 @@ void Pause(Configs& configs)
 		switch (pause_menu)
 		{
 		case kResume:
-			SetConsoleDimestions(configs.screen_width, configs.screen_height, configs.font_size);
+			SetConsoleDimestions(Configs::screen_width, Configs::screen_height, Configs::font_size);
 			return;
 		case kResolutions:
 		{
 			system("cls");
 
-			std::cout << "\nConsole width:	";
-			std::cin >> configs.screen_width;
-			std::cout << "\nConsole height:	";
-			std::cin >> configs.screen_height;
-			std::cout << "\nFont size:		";
-			std::cin >> configs.font_size;
+			std::string tmp;
 
-			configs.SaveToFile();
-			SetConsoleDimestions(configs.screen_width, configs.screen_height, configs.font_size);
-			Pause(configs);
+			std::cout << "\nConsole width:	";
+			std::cin >> tmp;
+			Configs::ChangeConfig(Configs::ChangeVariant::kScreenWidth, tmp);
+			std::cout << "\nConsole height:	";
+			std::cin >> tmp;
+			Configs::ChangeConfig(Configs::ChangeVariant::kScreenHeight, tmp);
+			std::cout << "\nFont size:		";
+			std::cin >> tmp;
+			Configs::ChangeConfig(Configs::ChangeVariant::kFontSize, tmp);
+
+			Configs::SaveToFile();
+			SetConsoleDimestions(Configs::screen_width, Configs::screen_height, Configs::font_size);
+			Pause();
 			return;
 		}
 		case kReturn:
@@ -365,9 +385,9 @@ void SetConsoleDimestions(int screen_width, int screen_height, int font_size)
 }
 
 
-void EditConnectionSettings(Configs& configs)
+void EditConnectionSettings()
 {
-	std::cout << "\n Server ip:port :  " << configs.server_ip << ":" << configs.default_port << std::endl <<
+	std::cout << "\n Server ip:port :  " << Configs::server_ip << ":" << Configs::default_port << std::endl <<
 		"\n (1) - Connect" <<
 		"\n (2) - Edit\n";
 
@@ -380,9 +400,9 @@ void EditConnectionSettings(Configs& configs)
 		break;
 	case 2:
 	{
-		configs.set_server_ip();
-		configs.set_port();
-		configs.SaveToFile();
+		Configs::set_server_ip();
+		Configs::set_port();
+		Configs::SaveToFile();
 	}
 	default:
 		break;

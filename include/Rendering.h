@@ -31,7 +31,6 @@ namespace rendering
 								std::chrono::system_clock::time_point&>;
 
 	using GamingInfo =	std::tuple<float,
-								Configs&,
 								Player*,
 								std::chrono::system_clock::time_point&,
 								network::ClientGame*>;
@@ -40,14 +39,19 @@ namespace rendering
 	float distance(float x1, float y1, float x2, float y2);
 
 	// Gets crossing point
-	bool cross(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, float& x, float& y);
+	bool cross(float x1, float y1, 
+	float x2, float y2, 
+	float x3, float y3, 
+	float x4, float y4, 
+	float& x, float& y);
 
 	// Collision event
-	void Collision(const std::vector<std::vector<bool>>& map, Player* player, float elapsed_time, char key);
+	void Collision(const std::vector<std::vector<bool>>& map, 
+	Player* player, float elapsed_time, char key);
 
 	// Gets key commands
 	void CalculatePosition(GamingInfo& game_info);
 
-	void RenderFrame(GamingInfo& game_info, const Textures& textures, ConsoleInfo& console_info);
+	void RenderFrame(GamingInfo& game_info, ConsoleInfo& console_info);
 };
 

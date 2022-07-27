@@ -15,12 +15,10 @@
 
 namespace network
 {
-    ClientGame::ClientGame(Configs* configs)
+    ClientGame::ClientGame()
     {
-        configs_ = configs;
-
         // Connect to the server
-        network_ = new ClientNetwork(configs_->server_ip, configs_->default_port);
+        network_ = new ClientNetwork(const_cast<char*> (Configs::server_ip), const_cast<char*> (Configs::default_port));
     }
 
 
@@ -49,14 +47,14 @@ namespace network
             {
             case kInitConnetion:
             {
-                configs_ = new Configs(packet.packet_data);
+                Configs(packet.packet_data);
                 printf("Client received configuration file\n");
                 got_configs_ = true;
                 break;
             }
             case kMap:
             {
-                configs_->GetMap(packet.packet_data);
+                Configs::GetMap(packet.packet_data);
                 printf("Client received map\n");
                 got_map_ = true;
                 break;
@@ -68,7 +66,7 @@ namespace network
 
                 // If there's no such player before
                 if (other_players_.count(player_index) == 0)
-                    other_players_.insert(std::make_pair(player_index, new Player(*configs_)));
+                    other_players_.insert(std::make_pair(player_index, new Player()));
 
                 Player* player_to_change = other_players_[player_index];
 

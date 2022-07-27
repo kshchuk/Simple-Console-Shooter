@@ -102,11 +102,9 @@ namespace rendering
 	void CalculatePosition(GamingInfo& game_info)
 	{
 		const float& elapsed_time = get<0>(game_info);
-		const Configs& configs = get<1>(game_info);
-		const auto& map = get<1>(game_info).map;
-		Player* player = get<2>(game_info);
-		auto& last_firing_time = get<3>(game_info);
-		network::ClientGame* client = get<4>(game_info);
+		Player* player = get<1>(game_info);
+		auto& last_firing_time = get<2>(game_info);
+		network::ClientGame* client = get<3>(game_info);
 
 		// Handle CCW Rotation
 		if (GetAsyncKeyState(static_cast<unsigned short> ('A')) & 0x8000)
@@ -123,12 +121,12 @@ namespace rendering
 			player->pos.y += cosf(player->rotation) * player->kSpeed * elapsed_time;
 
 			// Collision
-			if (map[static_cast<int> (player->pos.x)][static_cast<int> (player->pos.y)])
+			if (Configs::map[static_cast<int> (player->pos.x)][static_cast<int> (player->pos.y)])
 			{
 				player->pos.x -= sinf(player->rotation) * player->kSpeed * elapsed_time;
 				player->pos.y -= cosf(player->rotation) * player->kSpeed * elapsed_time;
 
-				Collision(map, player, elapsed_time, 'W');
+				Collision(Configs::map, player, elapsed_time, 'W');
 			}
 		}
 
@@ -139,12 +137,12 @@ namespace rendering
 			player->pos.y -= cosf(player->rotation) * player->kSpeed * elapsed_time;
 
 			// Collision
-			if (map[static_cast<int> (player->pos.x)][static_cast<int> (player->pos.y)])
+			if (Configs::map[static_cast<int> (player->pos.x)][static_cast<int> (player->pos.y)])
 			{
 				player->pos.x += sinf(player->rotation) * player->kSpeed * elapsed_time;
 				player->pos.y += cosf(player->rotation) * player->kSpeed * elapsed_time;
 
-				Collision(map, player, elapsed_time, 'S');
+				Collision(Configs::map, player, elapsed_time, 'S');
 			}
 		}
 
@@ -153,7 +151,7 @@ namespace rendering
 		{
 			std::chrono::duration<float> cur_reloading_time = std::chrono::system_clock::now() - last_firing_time;
 			float fcur_reloading_time = cur_reloading_time.count();
-			if (fcur_reloading_time > configs.gun_reloading)
+			if (fcur_reloading_time > Configs::gun_reloading)
 				last_firing_time = std::chrono::system_clock::now();
 			if (client) {
 				client->SendShootingInfo();
@@ -161,24 +159,22 @@ namespace rendering
 		}
 	}
 
-	void RenderFrame(GamingInfo& game_info, const Textures& textures, ConsoleInfo& console_info)
+	void RenderFrame(GamingInfo& game_info, ConsoleInfo& console_info)
 	{
 		const float elapsed_time = get<0>(game_info);
-		const Configs& configs = get<1>(game_info);
-		const auto& map = get<1>(game_info).map;
-		Player* player = get<2>(game_info);
-		auto& last_firing_time = get<3>(game_info);
-		network::ClientGame*client = get<4>(game_info);
+		Player* player = get<1>(game_info);
+		auto& last_firing_time = get<2>(game_info);
+		network::ClientGame*client = get<3>(game_info);
 
 		HANDLE console = get<0>(console_info);
 		DWORD bytes_written = get<1>(console_info);
 		wchar_t* screen = get<2>(console_info);
 
 		
-		for (int x = 0; x < configs.screen_width; x++)
+		for (int x = 0; x < Configs::screen_width; x++)
 		{
 			// For each column, calculate the projected ray angle into world space
-			float ray_angle = (player->rotation - player->kFOV / 2.0f) + (static_cast<float> (x) / static_cast<float> (configs.screen_width)) * player->kFOV;
+			float ray_angle = (player->rotation - player->kFOV / 2.0f) + (static_cast<float> (x) / static_cast<float> (Configs::screen_width)) * player->kFOV;
 
 			// Find distance to wall
 			float step_size = 0.1f;		      // Increment size for ray casting, decrease to increase resolution						
@@ -201,14 +197,14 @@ namespace rendering
 				float cur_ray_pos_y = player->pos.y + direction_vector_y * distance_to_obstacle;
 
 				// Test if ray is out of bounds
-				if (cur_ray_pos_x < 0 || cur_ray_pos_x >= configs.map_width || cur_ray_pos_y < 0 || cur_ray_pos_y >= configs.map_height)
+				if (cur_ray_pos_x < 0 || cur_ray_pos_x >= Configs::map_width || cur_ray_pos_y < 0 || cur_ray_pos_y >= Configs::map_height)
 				{
 					hit_wall = true;			// Just set distance to maximum kDepth
 					distance_to_obstacle = player->kDepth;
 				}
 				else
 					// Ray is inbounds so test to see if the ray cell is a wall block
-					if (map[static_cast<int> (cur_ray_pos_x)][static_cast<int> (cur_ray_pos_y)])
+					if (Configs::map[static_cast<int> (cur_ray_pos_x)][static_cast<int> (cur_ray_pos_y)])
 					{
 						// Ray has hit wall
 						hit_wall = true;
@@ -247,7 +243,7 @@ namespace rendering
 							for (auto iter : client->other_players_)
 							{
 								Player* cur_player = iter.second;
-								if (distance(cur_player->pos.x, cur_player->pos.y, player->pos.x, player->pos.y) > configs.depth)	// if player isn't in the reach zone
+								if (distance(cur_player->pos.x, cur_player->pos.y, player->pos.x, player->pos.y) > Configs::depth)	// if player isn't in the reach zone
 									continue;
 								else
 								{
@@ -309,8 +305,8 @@ namespace rendering
 			}
 
 			// Calculate distance to ceiling and floor
-			int celling_dist = static_cast<float> (configs.screen_height / 2.0) - configs.screen_height / (static_cast<float> (distance_to_obstacle));
-			int floor_dist = configs.screen_height - celling_dist;
+			int celling_dist = static_cast<float> (Configs::screen_height / 2.0) - Configs::screen_height / (static_cast<float> (distance_to_obstacle));
+			int floor_dist = Configs::screen_height - celling_dist;
 
 			short pixel = ' ';
 
@@ -337,63 +333,63 @@ namespace rendering
 				if (hit_player_boundary)		pixel = ' '; // make border
 			}
 
-			for (int y = 0; y < configs.screen_height; y++)
+			for (int y = 0; y < Configs::screen_height; y++)
 			{
 				// Each Row
 				if (y <= celling_dist)
-					screen[y * configs.screen_width + x] = ' ';
+					screen[y * Configs::screen_width + x] = ' ';
 				else if (y > celling_dist && y <= floor_dist)
-					screen[y * configs.screen_width + x] = pixel;
+					screen[y * Configs::screen_width + x] = pixel;
 				else // Floor
 				{
 					// Shades floor based on distance
-					float b = 1.0f - ((static_cast<float>(y) - configs.screen_height / 2.0f) / (static_cast<float>(configs.screen_height) / 2.0f));
+					float b = 1.0f - ((static_cast<float>(y) - Configs::screen_height / 2.0f) / (static_cast<float>(Configs::screen_height) / 2.0f));
 					if (b < 0.25)		pixel = '#';
 					else if (b < 0.5)	pixel = 'x';
 					else if (b < 0.75)	pixel = '.';
 					else if (b < 0.9)	pixel = '-';
 					else				pixel = ' ';
-					screen[y * configs.screen_width + x] = pixel;
+					screen[y * Configs::screen_width + x] = pixel;
 				}
 			}
 		}
 
 		// Display the sight
-		size_t map_center_x = configs.screen_width / 2,
-			   map_center_y = configs.screen_height / 2;
+		int map_center_x = Configs::screen_width / 2,
+			   map_center_y = Configs::screen_height / 2;
 
-		size_t sight_thickness_v = configs.screen_width / 100,
-			sight_thickness_h = configs.screen_height / 50;
+		int sight_thickness_v = Configs::screen_width / 100,
+			sight_thickness_h = Configs::screen_height / 50;
 
-		size_t left_top_vline_corner_x = map_center_x - sight_thickness_v / 2,
-			left_top_vline_corner_y = map_center_y - configs.screen_height / 40,
-			left_bottom_vline_corner_y = map_center_y + configs.screen_height / 40,
+		int left_top_vline_corner_x = map_center_x - sight_thickness_v / 2,
+			left_top_vline_corner_y = map_center_y - Configs::screen_height / 40,
+			left_bottom_vline_corner_y = map_center_y + Configs::screen_height / 40,
 
-			left_top_hline_corner_x = map_center_x - configs.screen_width / 80,
+			left_top_hline_corner_x = map_center_x - Configs::screen_width / 80,
 			left_top_hline_corner_y = map_center_y - sight_thickness_h / 2,
-			right_top_hline_corner_x = map_center_x + configs.screen_width / 80;
+			right_top_hline_corner_x = map_center_x + Configs::screen_width / 80;
 
 		for (int ny = left_top_vline_corner_y; ny < left_bottom_vline_corner_y; ny++)
 			for (int nx = left_top_vline_corner_x; nx < map_center_x + sight_thickness_v / 2; nx++)
 			{
-				screen[ny * configs.screen_width + nx] = 0x263B;
+				screen[ny * Configs::screen_width + nx] = 0x263B;
 			}
 
 		for (int ny = left_top_hline_corner_y; ny < map_center_y + sight_thickness_h / 2; ny++)
 			for (int nx = left_top_hline_corner_x; nx < right_top_hline_corner_x; nx++)
 			{
-				screen[ny * configs.screen_width + nx] = 0x263B;
+				screen[ny * Configs::screen_width + nx] = 0x263B;
 			}
 
 
 		// Display the health line
-		size_t health_line_thickness = configs.screen_height / 50;
-		size_t health_line_width = configs.screen_width * player->health / 100;
-		for (int ny = configs.screen_height - health_line_thickness - 1; ny < configs.screen_height; ny++) {
+		int health_line_thickness = Configs::screen_height / 50;
+		int health_line_width = Configs::screen_width * player->health / 100;
+		for (int ny = Configs::screen_height - health_line_thickness - 1; ny < Configs::screen_height; ny++) {
 			for (int nx = 0; nx < health_line_width; nx++)
-				screen[ny * configs.screen_width + nx] = 0x2588;
-			for (int nx = health_line_width; nx < configs.screen_width; nx++)
-				screen[ny * configs.screen_width + nx] = 0x2661;
+				screen[ny * Configs::screen_width + nx] = 0x2588;
+			for (int nx = health_line_width; nx < Configs::screen_width; nx++)
+				screen[ny * Configs::screen_width + nx] = 0x2661;
 		}
 
 
@@ -403,13 +399,13 @@ namespace rendering
 
 		if (fcur_reloading_time > 0 && fcur_reloading_time < 0.1) // Small explosion
 		{
-			int expl_step_x = configs.screen_width / 70,
-				expl_step_y = configs.screen_height / 40;
+			int expl_step_x = Configs::screen_width / 70,
+				expl_step_y = Configs::screen_height / 40;
 
-			for (int ty = textures.small_explosion_file_height, y = configs.screen_height / 4 * 3; ty > 0; ty -= expl_step_y, y--)
-				for (int tx = 1, x = map_center_x + configs.screen_width / 8; tx < textures.small_explosion_file_width; tx += expl_step_x, x++) {
-					if (textures.small_explosion[ty - 1][tx - 1] != ' ')
-						screen[y * configs.screen_width + x] = textures.small_explosion[ty - 1][tx - 1];
+			for (int ty = Textures::kSmallExplosionHeight, y = Configs::screen_height / 4 * 3; ty > 0; ty -= expl_step_y, y--)
+				for (int tx = 1, x = map_center_x + Configs::screen_width / 8; tx < Textures::kSmallExplosionWidth; tx += expl_step_x, x++) {
+					if (Textures::small_explosion[ty - 1][tx - 1] != ' ')
+						screen[y * Configs::screen_width + x] = Textures::small_explosion[ty - 1][tx - 1];
 					else
 						continue;
 				}
@@ -417,13 +413,13 @@ namespace rendering
 		else
 			if (fcur_reloading_time > 0.1 && fcur_reloading_time < 0.2) // Middle explosion
 			{
-				int expl_step_x = configs.screen_width / 70,
-					expl_step_y = configs.screen_height / 40;
+				int expl_step_x = Configs::screen_width / 70,
+					expl_step_y = Configs::screen_height / 40;
 
-				for (int ty = textures.middle_explosion_file_height, y = configs.screen_height / 4 * 3.2; ty > 0; ty -= expl_step_y, y--)
-					for (int tx = 1, x = map_center_x + configs.screen_width / 9; tx < textures.middle_explosion_file_width; tx += expl_step_x, x++) {
-						if (textures.middle_explosion[ty - 1][tx - 1] != ' ')
-							screen[y * configs.screen_width + x] = textures.middle_explosion[ty - 1][tx - 1];
+				for (int ty = Textures::kMiddleExplosionHeight, y = Configs::screen_height / 4 * 3.2; ty > 0; ty -= expl_step_y, y--)
+					for (int tx = 1, x = map_center_x + Configs::screen_width / 9; tx < Textures::kMiddleExplosionWidth; tx += expl_step_x, x++) {
+						if (Textures::middle_explosion[ty - 1][tx - 1] != ' ')
+							screen[y * Configs::screen_width + x] = Textures::middle_explosion[ty - 1][tx - 1];
 						else
 							continue;
 					}
@@ -431,46 +427,46 @@ namespace rendering
 			else
 				if (fcur_reloading_time > 0.2 && fcur_reloading_time < 0.3) // Big explosion
 				{
-					int expl_step_x = configs.screen_width / 70,
-						expl_step_y = configs.screen_height / 40;
+					int expl_step_x = Configs::screen_width / 70,
+						expl_step_y = Configs::screen_height / 40;
 
-					for (int ty = textures.big_explosion_file_height, y = configs.screen_height / 4 * 3.3; ty > 0; ty -= expl_step_y, y--)
-						for (int tx = 1, x = map_center_x + configs.screen_width / 10; tx < textures.big_explosion_file_width; tx += expl_step_x, x++) {
-							if (textures.big_explosion[ty - 1][tx - 1] != ' ')
-								screen[y * configs.screen_width + x] = textures.big_explosion[ty - 1][tx - 1];
+					for (int ty = Textures::kBigExplosionHeight, y = Configs::screen_height / 4 * 3.3; ty > 0; ty -= expl_step_y, y--)
+						for (int tx = 1, x = map_center_x + Configs::screen_width / 10; tx < Textures::kBigExplosionWidth; tx += expl_step_x, x++) {
+							if (Textures::big_explosion[ty - 1][tx - 1] != ' ')
+								screen[y * Configs::screen_width + x] = Textures::big_explosion[ty - 1][tx - 1];
 							else
 								continue;
 						}
 				}
 
 		// Distplay the gun
-		int gun_step_x = configs.screen_width / 70,
-			gun_step_y = configs.screen_height / 40;
+		int gun_step_x = Configs::screen_width / 70,
+			gun_step_y = Configs::screen_height / 40;
 
-		for (int ty = textures.gun_file_height - 1, y = configs.screen_height - health_line_thickness * 2; ty > 0; ty -= gun_step_y, y--)
-			for (int tx = 1, x = map_center_x + configs.screen_width / 10; tx < textures.gun_file_width; tx += gun_step_x, x++) {
-				if (textures.gun[ty][tx - 1] != '&')
-					screen[y * configs.screen_width + x] = textures.gun[ty][tx - 1];
+		for (int ty = Textures::kGunHeight - 1, y = Configs::screen_height - health_line_thickness * 2; ty > 0; ty -= gun_step_y, y--)
+			for (int tx = 1, x = map_center_x + Configs::screen_width / 10; tx < Textures::kGunWidth; tx += gun_step_x, x++) {
+				if (Textures::gun[ty][tx - 1] != '&')
+					screen[y * Configs::screen_width + x] = Textures::gun[ty][tx - 1];
 				else
 					continue;
 			}
 
 
-
+		
 		// Display Stats
 		swprintf_s(screen, 50, L"X=%3.2f, Y=%3.2f, A=%3.2f FPS=%3.2f ", player->pos.x, player->pos.y, player->rotation, 1.0f / elapsed_time);
 
 		// Display Map
-		for (int nx = 0; nx < configs.map_width; nx++)
-			for (int ny = 0; ny < configs.map_width; ny++)
+		for (int nx = 0; nx < Configs::map_width; nx++)
+			for (int ny = 0; ny < Configs::map_width; ny++)
 			{
-				screen[(ny + 1) * configs.screen_width + nx] = map[ny][nx] ? '#' : ' ';
+				screen[(ny + 1) * Configs::screen_width + nx] = Configs::map[ny][nx] ? '#' : ' ';
 			}
-		screen[(static_cast<int>(player->pos.x) + 1) * configs.screen_width + static_cast<int>(player->pos.y)] = 'P';
+		screen[(static_cast<int>(player->pos.x) + 1) * Configs::screen_width + static_cast<int>(player->pos.y)] = 'P';
 
 		// Display Frame
-		screen[configs.screen_width * configs.screen_height - 1] = '\0';
-		WriteConsoleOutputCharacter(console, screen, configs.screen_width * configs.screen_height, { 0,0 }, &bytes_written);
+		screen[Configs::screen_width * Configs::screen_height - 1] = '\0';
+		WriteConsoleOutputCharacter(console, screen, Configs::screen_width * Configs::screen_height, { 0,0 }, &bytes_written);
 	}
 
 	float distance(float x1, float y1, float x2, float y2)

@@ -27,8 +27,6 @@ namespace network
     class ClientGame
     {
     public:
-        // Server ip and port to connect to.
-        Configs* configs_ = nullptr;
 
         // Me
         Player* player_ = nullptr;
@@ -45,7 +43,7 @@ namespace network
 
         char network_data_[kMaxPacketSize];
 
-        ClientGame(Configs* configs);
+        ClientGame();
 
         // Receives other players' location, current state of the player(
         // i.e. myself) and sends my info
