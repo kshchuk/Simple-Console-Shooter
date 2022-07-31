@@ -22,7 +22,7 @@
 
 namespace network
 {
-    ServerNetwork::ServerNetwork(char* port)
+    ServerNetwork::ServerNetwork(const char* port)
     {
 
         // Create WSADATA object

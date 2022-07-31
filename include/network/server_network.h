@@ -44,7 +44,7 @@ namespace network
         // Table to keep track of each client's socket
         std::map<unsigned int, SOCKET> sessions_;
 
-        ServerNetwork(char* port);
+        ServerNetwork(const char* port);
         ~ServerNetwork(void);
 
         // Accept new connections

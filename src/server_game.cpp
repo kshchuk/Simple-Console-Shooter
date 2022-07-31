@@ -21,22 +21,19 @@ namespace network
 {
     unsigned int ServerGame::client_id_;
 
-    ServerGame::ServerGame(Configs* configs)
+    ServerGame::ServerGame()
     {
-        // Assign game configs (map, speed, etc)
-        configs_ = configs;
-
         // Id's to assign clients for our table
         client_id_ = 0;
 
         // Set up the server network to listen 
-        network_ = new ServerNetwork(configs->default_port);
+        network_ = new ServerNetwork(Configs::default_port);
 
-        real_map_.resize(configs->map_height);
-        for (int i = 0; i < configs->map_height; i++) {
-            real_map_[i].resize(configs->map_width);
-            for (int j = 0; j < configs->map_width; j++)
-                real_map_[i][j] = configs->map[i][j] ? '#' : ' ';
+        real_map_.resize(Configs::map_height);
+        for (int i = 0; i < Configs::map_height; i++) {
+            real_map_[i].resize(Configs::map_width);
+            for (int j = 0; j < Configs::map_width; j++)
+                real_map_[i][j] = Configs::map[i][j] ? '#' : ' ';
         }
     }
 
@@ -52,7 +49,7 @@ namespace network
 
             SendMap(client_id_);
 
-            Player* p = new Player(*configs_);
+            Player* p = new Player();
             p->index = client_id_;
 
             players_locations_.insert(std::make_pair(client_id_, p));
@@ -105,13 +102,13 @@ namespace network
     // Sends shouting information: new health and small movement (0.05) or return player to spawn
     void ServerGame::SendShootingInfo(Player* shooter, Player* player_to_change)
     {
-        if (player_to_change->health - configs_->shooting_damage <= 0) {
-            player_to_change->RandomPosition(*configs_); // respawn
-            player_to_change->health = configs_->health;
+        if (player_to_change->health - Configs::shooting_damage <= 0) {
+            player_to_change->RandomPosition(); // respawn
+            player_to_change->health = Configs::health;
             printf("Player %i killed player %i\n", shooter->index, player_to_change->index);
         }
         else {
-            player_to_change->health -= configs_->shooting_damage;
+            player_to_change->health -= Configs::shooting_damage;
 
             // Do some moving of the target
             float direct_x = sinf(shooter->rotation);   // Unit vector for ray in shooting direction
@@ -161,7 +158,7 @@ namespace network
         packet.size_of_packet_data = sizeof(Configs);
 
         packet.packet_data = new char[packet.size_of_packet_data];
-        memcpy(packet.packet_data, configs_, sizeof(Configs));
+        memcpy(packet.packet_data, new Configs, sizeof(Configs));
 
         size_t packet_size = sizeof(packet.packet_type) + sizeof(packet.size_of_packet_data) + packet.size_of_packet_data;
         char* packet_data = new char[packet_size];
@@ -179,11 +176,11 @@ namespace network
     void ServerGame::SendMap(size_t client)
     {
         // Convert map to single array
-        size_t map_size = configs_->map_width * configs_->map_height;
+        size_t map_size = Configs::map_width * Configs::map_height;
         bool* map = new bool[map_size];
-        for (size_t i = 0; i < configs_->map_height; i++)
-            for (size_t j = 0; j < configs_->map_width; j++) {
-                map[i * configs_->map_width + j] = configs_->map[i][j];
+        for (size_t i = 0; i < Configs::map_height; i++)
+            for (size_t j = 0; j < Configs::map_width; j++) {
+                map[i * Configs::map_width + j] = Configs::map[i][j];
             }
 
         Packet packet;
@@ -212,15 +209,16 @@ namespace network
         for (size_t i = 0; i < real_map_.size(); i++)
             for (size_t j = 0; j < real_map_[i].size(); j++)
                 if (real_map_[i][j] == player->index + '0') {
-                    real_map_[i][j] = configs_->map[i][j] ? '#' : ' ';
+                    real_map_[i][j] = Configs::map[i][j] ? '#' : ' ';
                     real_map_[(int)player->pos.x][(int)player->pos.y] = player->index + '0';
                     return;
                 }
         // if not found - add player to map
-        real_map_[static_cast<int> (player->pos.x)][static_cast<int> (player->pos.y)] = player->index + '0';
+        real_map_[static_cast<int> (player->pos.x)][static_cast<int> (player->pos.y)] = 
+                                                                        player->index + '0';
     }
 
-    bool ServerGame::CheckShouting(Player* shooter, Player* target)
+    bool ServerGame::CheckShouting(const Player* shooter, Player* target)
     {
         target->CaclulatePositions();
 
@@ -231,8 +229,8 @@ namespace network
         float direct_vector_y = cosf(shooter->rotation);
 
         // Crosing point
-        float cur_ray_pos_x = shooter->pos.x + direct_vector_x * configs_->max_shooting_range;
-        float cur_ray_pos_y = shooter->pos.y + direct_vector_y * configs_->max_shooting_range;
+        float cur_ray_pos_x = shooter->pos.x + direct_vector_x * Configs::max_shooting_range;
+        float cur_ray_pos_y = shooter->pos.y + direct_vector_y * Configs::max_shooting_range;
 
         // Check whether the ray crosses the silhoete
         if (cross(shooter->pos.x, shooter->pos.y, cur_ray_pos_x, cur_ray_pos_y,
@@ -253,19 +251,19 @@ namespace network
 
             // Incrementally cast ray from player, along ray angle, testing for 
             // intersection with a block or a player
-            while (!hit_wall && !hit_player && distance_to_obstacle < configs_->max_shooting_range)
+            while (!hit_wall && !hit_player && distance_to_obstacle < Configs::max_shooting_range)
             {
                 distance_to_obstacle += step_size;
                 cur_ray_pos_x = shooter->pos.x + direct_vector_x * distance_to_obstacle;
                 cur_ray_pos_y = shooter->pos.y + direct_vector_y * distance_to_obstacle;
 
                 // Test if ray is out of bounds
-                if (cur_ray_pos_x < 0 || cur_ray_pos_x >= configs_->map_width || cur_ray_pos_y < 0 || cur_ray_pos_y >= configs_->map_height)
+                if (cur_ray_pos_x < 0 || cur_ray_pos_x >= Configs::map_width || cur_ray_pos_y < 0 || cur_ray_pos_y >= Configs::map_height)
                 {
                     hit_wall = true;
                 }
                 else // Ray is inbounds so test to see if the ray cell is a wall block
-                    if (configs_->map[static_cast<int> (cur_ray_pos_x)][static_cast<int> (cur_ray_pos_y)])
+                    if (Configs::map[static_cast<int> (cur_ray_pos_x)][static_cast<int> (cur_ray_pos_y)])
                     {
                         // Ray has hit wall
                         hit_wall = true;
@@ -344,7 +342,7 @@ namespace network
                     // Check is reloaded
                     std::chrono::system_clock::now();
                     std::chrono::duration<float> difference = std::chrono::system_clock::now() - last_firing_times_[player_index];
-                    if (difference.count() < configs_->gun_reloading)
+                    if (difference.count() < Configs::gun_reloading)
                         break;
                     else
                         last_firing_times_[player_index] = std::chrono::system_clock::now();

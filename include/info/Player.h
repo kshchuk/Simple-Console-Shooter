@@ -46,9 +46,9 @@ struct Player
 	Point left_back;
 	Point right_back;
 
-	Player(Configs configs);
+	Player();
 
-	void RandomPosition(Configs configs);
+	void RandomPosition();
 
 	// Calculates siluet's rectangel's corners positions
 	void CaclulatePositions();

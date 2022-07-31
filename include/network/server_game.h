@@ -24,8 +24,6 @@ namespace network
     class ServerGame
     {
     public:
-        Configs* configs_;
-
         // Real-time map with the players
         std::vector<std::vector<char>> real_map_;
 
@@ -35,8 +33,8 @@ namespace network
         // Player's index and last firing time
         std::map<size_t, std::chrono::system_clock::time_point> last_firing_times_;
 
-        ServerGame(Configs*);
-        ~ServerGame(void);
+        ServerGame();
+        //~ServerGame(void);
 
         // Gets information from clients, register new clients, 
         // checks shooting
@@ -75,7 +73,7 @@ namespace network
         void UpdateMap(Player*);
 
         // Tests whether there is a hit
-        bool CheckShouting(Player* shooter, Player* target);
+        bool CheckShouting(const Player* shooter, Player* target);
 
         // Gets crossing point
         bool cross(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, float& x, float& y);

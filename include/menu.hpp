@@ -17,19 +17,19 @@
 
 void MainMenu();
 
-void ServerLoop(network::ServerGame* server)
+void ServerLoop(network::ServerGame server)
 {
 	while (true)
 	{
-		server->update();
+		server.update();
 	}
 }
 
-void PrintMapLoop(network::ServerGame* server)
+void PrintMapLoop(network::ServerGame server)
 {
 	while (true)
 	{
-		server->PrintMap();
+		server.PrintMap();
 		Sleep(1000);
 	}
 }
@@ -38,7 +38,7 @@ void SettingsMode()
 {
 	system("cls");
 
-	Configs* configs = new Configs();
+	Configs _;
 
 	enum SettingsMenu
 	{
@@ -52,7 +52,7 @@ void SettingsMode()
 	{
 		system("cls");
 
-		configs->PrintAllSettings();
+		Configs::PrintAllSettings();
 
 		std::cout << "\n\n (1) - Change settings" <<
 			"\n (2) - Print map" <<
@@ -78,32 +78,41 @@ void SettingsMode()
 			std::string new_value;
 			std::cout << "Enter new value:	";
 			std::cin >> new_value;
-			configs->ChangeConfig(change_variant, new_value);
-			configs->SaveToFile();
+			Configs::ChangeConfig(change_variant, new_value);
+			Configs::SaveToFile();
 			break;
 		}
 		case kMap:
 			system("cls");
-			configs->PrintMap();
+			Configs::PrintMap();
 			system("PAUSE");
 			break;
 		case kEditMap:
 		{
 			system("cls");
-			configs->PrintMap();
+			Configs::PrintMap();
 
 			int elems_to_change_num;
 			std::cout << "\nNumber of elements to change: ";
 			std::cin >> elems_to_change_num;
 
 			std::cout << "\nEnter the coordinates and value, where 1 - wall, 0 - space (example ' 0 23 1 ', ' 3 1 0 ' ";
+			std::vector<std::vector<bool>> map = Configs::map;
+
 			for (int i = 0; i < elems_to_change_num; i++)
 			{
 				int x, y, value;
 				std::cin >> x >> y >> value;
-				configs->map[x][y] = value;
+				map[x][y] = value;
 			}
-			configs->SaveToFile();
+
+			std::string smap;
+			for (auto line : map)
+				for (auto elem : line)
+					smap += '1' ? elem == true : '0';
+
+			Configs::ChangeConfig(Configs::ChangeVariant::kMap, smap);
+			Configs::SaveToFile();
 			break;
 		}
 		case kReturn:
@@ -119,6 +128,8 @@ void SettingsMode()
 void MainMenu()
 {
 	system("cls");
+
+	Configs _;
 
 	std::cout << "\n	Main menu\n" <<
 		"\n (1) - Start server" <<
@@ -142,9 +153,9 @@ void MainMenu()
 		{
 		case kStart:
 		{
-			Configs* configs = new Configs;
+			Configs _;
 
-			network::ServerGame* server = new network::ServerGame(configs);
+			network::ServerGame server;
 			std::thread main(ServerLoop, server);
 
 			std::cout << "\n See server logs (l) or see map (m): ";
