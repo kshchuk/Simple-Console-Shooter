@@ -1,0 +1,27 @@
+﻿  main.cpp
+D:\Projects\Simple-Console-Shooter\Server\include\info\configs.h(145,2): warning C4091: 'static ': ignored on left of 'Configs' when no variable is declared
+  configs.cpp
+D:\Projects\Simple-Console-Shooter\Server\include\info\configs.h(145,2): warning C4091: 'static ': ignored on left of 'Configs' when no variable is declared
+  player.cpp
+D:\Projects\Simple-Console-Shooter\Server\include\info\configs.h(145,2): warning C4091: 'static ': ignored on left of 'Configs' when no variable is declared
+D:\Projects\Simple-Console-Shooter\Server\src\player.cpp(33,22): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+D:\Projects\Simple-Console-Shooter\Server\src\player.cpp(34,22): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+D:\Projects\Simple-Console-Shooter\Server\src\player.cpp(35,27): warning C4244: 'argument': conversion from 'float' to 'const unsigned __int64', possible loss of data
+D:\Projects\Simple-Console-Shooter\Server\src\player.cpp(35,34): warning C4244: 'argument': conversion from 'float' to 'unsigned __int64', possible loss of data
+D:\Projects\Simple-Console-Shooter\Server\src\player.cpp(37,32): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+  server_game.cpp
+D:\Projects\Simple-Console-Shooter\Server\include\info\configs.h(145,2): warning C4091: 'static ': ignored on left of 'Configs' when no variable is declared
+D:\Projects\Simple-Console-Shooter\Server\src\server_game.cpp(93,94): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+D:\Projects\Simple-Console-Shooter\Server\src\server_game.cpp(117,49): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+D:\Projects\Simple-Console-Shooter\Server\src\server_game.cpp(118,49): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+D:\Projects\Simple-Console-Shooter\Server\src\server_game.cpp(139,110): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+D:\Projects\Simple-Console-Shooter\Server\src\server_game.cpp(168,66): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data
+D:\Projects\Simple-Console-Shooter\Server\src\server_game.cpp(168,93): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+D:\Projects\Simple-Console-Shooter\Server\src\server_game.cpp(198,66): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data
+D:\Projects\Simple-Console-Shooter\Server\src\server_game.cpp(198,93): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+D:\Projects\Simple-Console-Shooter\Server\src\server_game.cpp(310,22): warning C4018: '<': signed/unsigned mismatch
+D:\Projects\Simple-Console-Shooter\Server\src\server_game.cpp(313,86): warning C4267: '+=': conversion from 'size_t' to 'int', possible loss of data
+D:\Projects\Simple-Console-Shooter\Server\src\server_game.cpp(343,51): warning C4834: discarding return value of function with 'nodiscard' attribute
+  server_network.cpp
+  Generating Code...
+  SimpleShooterServer.vcxproj -> D:\Projects\Simple-Console-Shooter\Server\x64\Debug\SimpleShooterServer.exe
